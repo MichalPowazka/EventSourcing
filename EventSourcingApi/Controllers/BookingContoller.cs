@@ -1,52 +1,65 @@
 ﻿using EventSourcing.Application.Commands.AddBooking;
+using EventSourcing.Application.Commands.CancelReservation;
 using EventSourcing.Domain;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using System.Xml.Linq;
 
 namespace EventSourcingApi.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
 
-    public class BookingContoller(IMediator mediator , IReservationRepository test) : ControllerBase
+    public class ReseravationContoller(IMediator _mediator, IReservationRepository test) : ControllerBase
     {
+
+        //Dodanie rezerwacj,
+        //Anulowanie rezerwacji
+        //query//Pobranie rezerwacji // pobranie eventów per pokoj
+        //Lista rezerwacji // wszytkich lub po jakims filtrze
+        // query //Historia rezerwacji
+        //comand  //Update rezerwcji
+        //query //Sprawdzenie dostepnosci // srpradzzamy czy
+        //podana data nie nie miesci sie w zakresach eventów typu create reseration
+        //--> pozniej rozszerzyc na zakres dat
+        //--> zasegurowac najblizszy najbardziej zbliony wolny 
+
+
+        //logowanie
+        //rejestracja
+        //
+
+
         [HttpPost]
-        public async Task<ActionResult<int>> AddBooking(AddBookingRequest request)
+        public async Task<ActionResult<int>> AddReservation(AddBookingRequest request)
         {
-            await test.Save(new EventSourcing.Domain.Events.CreateReservationEvenet()
-            {
-                Id = 1,
-                TimeStamp = DateTime.Now,
-                DateFrom = DateTime.Now.AddDays(2),
-                DateTo = DateTime.Now.AddDays(5),
-                User = new Account()
-            });
-
-            await test.Save(new EventSourcing.Domain.Events.CancelReservationEvent()
-            {
-                Id = 1,
-                TimeStamp = DateTime.Now,
-                CancelReason = "tEST1",
-                User = new Account()
-            }); ; 
-            //var res = await mediator.Send(request);
+            var result = await _mediator.Send(request);
+            var a = await test.GetById(request.Id).ToListAsync();
+            return Ok(result);
+        }
 
 
-            return Ok(1);
+        [HttpPost]
+        public async Task<ActionResult<int>> CancelReservation(CancelReservationRequest request)
+        {
+            var result = await _mediator.Send(request);
+            var a = await test.GetById(request.Id).ToListAsync();
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventSourcing.Domain.Events.ReservationEvent>>> GetBooking()
+        public async Task<ActionResult<List<object>>> GetBooking()
         {
             //await test.Test();
             //var res = await mediator.Send(request);
-            var res = await test.GetById(1).ToListAsync() ;
+            var res = await test.GetById(1).ToListAsync();
+            foreach (var a in res)
+            {
+                var x = a.GetType().Name;
 
-            return Ok(res);
+            }
+            var res2 = res.Select(x => (object)x).ToList();
+            return Ok(res2);
         }
     }
 }

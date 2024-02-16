@@ -1,28 +1,27 @@
-﻿//using MediatR;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using EventSourcing.Domain.Events;
+using EventSourcing.Persistance.Repositories;
+using MediatR;
 
-//namespace EventSourcing.Application.Commands.AddBooking
-//{
-//    public class AddBookingHandler : IRequestHandler<AddBookingRequest, int>
-//    {
-//        public Task<int> Handle(AddBookingRequest request, CancellationToken cancellationToken)
-//        {
-//              var entity = new Booking()
-//            {
-//                // ustawienie pol z requesta
-//            };
-//            _bookingRepository.Add(entity);
+namespace EventSourcing.Application.Commands.AddBooking
+{
+    public class AddBookingHandler(IReservationRepository _reservationRepository) : IRequestHandler<AddBookingRequest, int>
+    {
+        public async Task<int> Handle(AddBookingRequest request, CancellationToken cancellationToken)
+        {
+            var @event = new CreateReservationEvenet()
+            {
+                Id = request.Id,
+                DateFrom = request.DateFrom,
+                DateTo = request.DateTo,
+            };
 
-//            //zapis eventa w Event store
+            await _reservationRepository.Save(@event);
+            
+            return request.Id;
 
-//            return entity.Id;
+            
 
 
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+        }
+    }
+}
