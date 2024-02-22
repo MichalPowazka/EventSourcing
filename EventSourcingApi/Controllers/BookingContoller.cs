@@ -1,5 +1,6 @@
 ﻿using EventSourcing.Application.Commands.AddBooking;
 using EventSourcing.Application.Commands.CancelReservation;
+using EventSourcing.Application.Commands.UpdateReservation;
 using EventSourcing.Domain;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
@@ -34,7 +35,7 @@ namespace EventSourcingApi.Controllers
         public async Task<ActionResult<int>> AddReservation(AddBookingRequest request)
         {
             var result = await _mediator.Send(request);
-            var a = await test.GetById(request.Id).ToListAsync();
+            //var a = await test.GetById(request.Id).ToListAsync();
             return Ok(result);
         }
 
@@ -43,7 +44,15 @@ namespace EventSourcingApi.Controllers
         public async Task<ActionResult<int>> CancelReservation(CancelReservationRequest request)
         {
             var result = await _mediator.Send(request);
-            var a = await test.GetById(request.Id).ToListAsync();
+            //var a = await test.GetById(request.Id).ToListAsync();
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<int>> UpdateReservation(UpdateReservationRequest request)
+        {
+            var result = await _mediator.Send(request);
+            //var a = await test.GetById(request.Id).ToListAsync();
             return Ok(result);
         }
 
@@ -52,14 +61,14 @@ namespace EventSourcingApi.Controllers
         {
             //await test.Test();
             //var res = await mediator.Send(request);
-            var res = await test.GetById(1).ToListAsync();
-            foreach (var a in res)
-            {
-                var x = a.GetType().Name;
+            //var res = await test.GetById(1).ToListAsync();
+            //foreach (var a in res)
+            //{
+            //    var x = a.GetType().Name;
 
-            }
-            var res2 = res.Select(x => (object)x).ToList();
-            return Ok(res2);
+            //}
+            //var res2 = res.Select(x => (object)x).ToList();
+            return Ok();
         }
     }
 }

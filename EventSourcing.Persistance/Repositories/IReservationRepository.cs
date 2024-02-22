@@ -4,7 +4,7 @@ namespace EventSourcing.Persistance.Repositories;
 
 public interface IReservationRepository
 {
-    IAsyncEnumerable<ReservationEvent> GetById(int id);
+    IAsyncEnumerable<ReservationEvent> GetById(string id);
     Task Save(ReservationEvent reservationEvent);
     Task Test();
 }

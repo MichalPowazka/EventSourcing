@@ -7,10 +7,9 @@ namespace EventSourcing.Persistance.Repositories;
 internal class ReservationRepository(EventStoreClient _client) : IReservationRepository
 {
     private const string stream = "Reservation - ";
-    public async IAsyncEnumerable<ReservationEvent> GetById(int id)
+    public async IAsyncEnumerable<ReservationEvent> GetById(string id)
     {
-        var streamName = $"{stream}{id}";
-        var readResult =  await _client.ReadStreamAsync(Direction.Forwards, streamName, StreamPosition.Start, 100).ToListAsync();
+        var readResult =  await _client.ReadStreamAsync(Direction.Forwards, id, StreamPosition.Start, 100).ToListAsync();
         
         //seralizacja na kilku typów obiektów na podstawie Event Type
         foreach (var resolved in readResult)
@@ -33,7 +32,7 @@ internal class ReservationRepository(EventStoreClient _client) : IReservationRep
 
     public async Task Save(ReservationEvent reservationEvent)
     { 
-        var streamName = $"{stream}{reservationEvent.Id}";
+        var streamName = reservationEvent.Reservation.ToString();
         var eventData = new EventData(
             Uuid.NewUuid(),
             reservationEvent.GetType().Name,

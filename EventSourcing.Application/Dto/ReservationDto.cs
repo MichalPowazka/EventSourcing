@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventSourcing.Domain
+namespace EventSourcing.Application.Dto
 {
-    public class Booking
+    public class ReservationDto
     {
     }
 }

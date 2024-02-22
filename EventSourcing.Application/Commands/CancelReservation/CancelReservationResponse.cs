@@ -8,5 +8,6 @@ namespace EventSourcing.Application.Commands.CancelReservation
 {
     public class CancelReservationResponse
     {
+
     }
 }
