@@ -14,12 +14,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IRoomRepository, RoomRepository>();
 
-// konfiguracja dla dbContext
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<BookingDbContext>();
-
 builder.Services.AddDbContext<BookingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+// konfiguracja dla dbContext
+builder.Services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<BookingDbContext>();
 
 
 var app = builder.Build();

@@ -13,7 +13,15 @@ namespace EventSourcing.Persistance.Repositories
         }
         public async Task<int> AddAsync(Room room)
         {
-            _bookingDbContext.Rooms.Add(room);
+            _bookingDbContext.Add(room);
+            await _bookingDbContext.SaveChangesAsync();
+            return room.Id;
+
+        }
+
+        public async Task<int> UpdateAsync(Room room)
+        {
+            _bookingDbContext.Rooms.Update(room);
             return room.Id;
         }
 

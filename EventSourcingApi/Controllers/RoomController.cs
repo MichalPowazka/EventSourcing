@@ -1,4 +1,5 @@
 ﻿using EventSourcing.Application.Commands.AddRoom;
+using EventSourcing.Application.Commands.UpdateRoom;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,15 @@ namespace EventSourcingApi.Controllers
             var result = _mediator.Send(request);
             return Ok(result);
         }
+
+        [HttpPost("UpdateRoom")]
+        public ActionResult UpdateRoom([FromBody] UpdateRoomRequest request)
+        {
+            var result = _mediator.Send(request);
+            return Ok(result);
+        }
+
+
 
 
 
