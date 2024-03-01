@@ -9,18 +9,23 @@ namespace EventSourcingApi.Controllers
     [ApiController]
     public class AccountController(IMediator _mediator) : Controller
     {
+        //upadteUsera
+        //zmiana hasla
+        //usuwamoe konta
+        //logowanie = jwt zaimplemenotwac
+
 
         [HttpPost]
         public async Task<ActionResult> Login(LoginRequest request)
         {
-            var result = _mediator.Send(request);
+            var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<ActionResult> Register(RegisterRequest request)
         {
-            var result = _mediator.Send(request);
+            var result = await _mediator.Send(request);
             return Ok();
         }
     }

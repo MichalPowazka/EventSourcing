@@ -8,7 +8,7 @@ namespace EventSourcing.Application.Commands.AddBooking
     {
         public async Task<int> Handle(AddBookingRequest request, CancellationToken cancellationToken)
         {
-
+            //
             //powiaznie rezerwacji z pokojem
 
 
@@ -33,7 +33,7 @@ namespace EventSourcing.Application.Commands.AddBooking
 
 
 
-
+            //booking.add
         }
     }
 }

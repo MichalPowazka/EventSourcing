@@ -1,6 +1,7 @@
 using EventSourcing.Domain.Entities;
 using EventSourcing.Persistance;
 using EventSourcing.Persistance.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,8 +20,9 @@ builder.Services.AddDbContext<BookingDbContext>(options =>
 
 
 // konfiguracja dla dbContext
-builder.Services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<BookingDbContext>();
+builder.Services.AddIdentity<User, Role>()
+        .AddEntityFrameworkStores<BookingDbContext>()
+        .AddDefaultTokenProviders();
 
 
 var app = builder.Build();

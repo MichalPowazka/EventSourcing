@@ -22,13 +22,14 @@ namespace EventSourcing.Persistance.Repositories
         public async Task<int> UpdateAsync(Room room)
         {
             _bookingDbContext.Rooms.Update(room);
+            await _bookingDbContext.SaveChangesAsync();
             return room.Id;
         }
 
-        public  async Task<int> BookingRoom(RoomToReservation roomToReservation)
+        public async Task<int> BookingRoom(RoomToReservation roomToReservation)
         {
             var r = await GetAsync(roomToReservation.RoomId);
-            r.Reservations.Add(roomToReservation);  
+            r.Reservations.Add(roomToReservation);
             _bookingDbContext.SaveChanges();
             return roomToReservation.Id;
 

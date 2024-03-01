@@ -25,11 +25,20 @@ namespace EventSourcing.Application.Queries.GetReservation
             //Reservation jest z eventstore
             //W Db do ktoreggo pokoju ktore rezerwacje
 
+            //Booking Service
+            //tam przeniesc logike ktora z habdler a w handelerach tylko wywylwc metody
+            //zrobic metode ktora sprawdzi czy nie ma razerwacji dla danego w danym przedziale czasowm.
+            //pobieranie pokoju, pobranie jego rezerwacje, i przeitowanie po nich nie dodanu wczesniej takiej rezewacji
+            //W Acount sertvice zrobic generwaowanie tokenów jwt
+
+
             var room = await _roomRepository.GetAsync(request.RoomId);
             foreach(var reservation in room.Reservations)
             {
                var res =  _reservationRepository.GetById(reservation.StreamId);
             }
+
+           
 
             return new GetReservationResposne();
 

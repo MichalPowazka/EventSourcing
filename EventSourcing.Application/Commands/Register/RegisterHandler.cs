@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EventSourcing.Application.Commands.Register
 {
-    public class RegisterHandler(UserManager<User> _userManager) : IRequestHandler<RegisterRequest, RegisterResponse>
+    public class RegisterHandler(UserManager<User> _userManager, RoleManager<Role> _roleMenager) : IRequestHandler<RegisterRequest, RegisterResponse>
     {
         public async Task<RegisterResponse> Handle(RegisterRequest request, CancellationToken cancellationToken)
         {
@@ -18,13 +18,23 @@ namespace EventSourcing.Application.Commands.Register
                 UserName = request.Email
             };
 
-
-            try {
-                var result = await _userManager.CreateAsync(user, request.Password);
-            }catch (Exception ex)
+            try
             {
-                var x = ex;
+                //if (!await _roleMenager.RoleExistsAsync("User"))
+                //{
+                //    await _roleMenager.CreateAsync(new Role() { Name = "User" });
+                //}
+
+
+
+                var result = await _userManager.CreateAsync(user, request.Password);
+
+            }catch (Exception ex) {
+                var a = ex;
             }
+
+
+
 
             return new RegisterResponse();
         }
