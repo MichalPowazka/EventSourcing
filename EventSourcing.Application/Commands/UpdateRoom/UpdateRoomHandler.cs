@@ -10,17 +10,22 @@ public class UpdateRoomHandler(IRoomRepository _roomRepository) : IRequestHandle
     {   //pobieramhy pokoj  z db
         //zmianmy paramtry
         //zapis do db
-        var room = new Room()
+        var existingRoom = await _roomRepository.GetAsync(request.Id);
+
+        if(existingRoom == null)
         {
-            Name = request.Name,
-            Description = request.Description,
-            City = request.City,
-            Street = request.Street,
-            HouseNumber = request.HouseNumber,
-            ApartamentNumber = request.ApartamentNumber,
-            PostCode = request.PostCode
-        };
-        await _roomRepository.UpdateAsync(room);
+            throw new ArgumentException();
+        }
+
+        existingRoom.Name = request.Name;
+        existingRoom.Description = request.Description;
+        existingRoom.City = request.City;
+        existingRoom.Street = request.Street;
+        existingRoom.HouseNumber = request.HouseNumber;
+
+
+
+        await _roomRepository.UpdateAsync(existingRoom);
         return new UpdateRoomResponse() { Success = true };
     }
 }

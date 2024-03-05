@@ -1,5 +1,7 @@
 ﻿using EventSourcing.Application.Commands.AddRoom;
 using EventSourcing.Application.Commands.UpdateRoom;
+using EventSourcing.Application.Queries.GetRoomAll;
+using EventSourcing.Application.Queries.GetRoomById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,15 +17,31 @@ namespace EventSourcingApi.Controllers
         //Get do pobrania pokoju po id + querry do pobrania
         //Get do listy pokojów + querry do pobrania
         //Upload Zdjec do pokoju
-        [HttpPost("add-room")]
+        [HttpPost("add-room")]     
+        
         public async Task<ActionResult> AddRoom([FromBody] AddRoomRequest request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
         }
 
-        [HttpPost("update-room")]
+        [HttpPut("update-room")]
         public async Task<ActionResult> UpdateRoom([FromBody] UpdateRoomRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpGet("get-room")]
+
+        public async Task<ActionResult> GetRoomById([FromQuery] GetRoomByIdQueryRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpGet("get-room-all")]
+        public async Task<ActionResult> GetRoomAll([FromQuery] GetRoomAllQueryRequest request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);

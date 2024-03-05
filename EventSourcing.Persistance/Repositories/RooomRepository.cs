@@ -26,6 +26,12 @@ namespace EventSourcing.Persistance.Repositories
             return room.Id;
         }
 
+        public async Task<int> GetAsyncById(int id)
+        {
+           var room = await _bookingDbContext.Rooms.FindAsync(id);
+            return room.Id;
+        }
+
         public async Task<int> BookingRoom(RoomToReservation roomToReservation)
         {
             var r = await GetAsync(roomToReservation.RoomId);
