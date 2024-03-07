@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EventSourcing.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace EventSourcing.Application.Queries.GetRoomAll
 {
     public class GetRoomAllResponse
     {
+        public List<Room> ListRooms { get; set; }
     }
 }

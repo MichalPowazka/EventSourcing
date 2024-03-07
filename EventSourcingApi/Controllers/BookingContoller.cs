@@ -59,15 +59,15 @@ namespace EventSourcingApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<object>>> GetBooking()
         {
-            //await test.Test();
-            //var res = await mediator.Send(request);
-            //var res = await test.GetById(1).ToListAsync();
-            //foreach (var a in res)
-            //{
-            //    var x = a.GetType().Name;
+            await test.Test();
+           /* var res = await mediator.Send(request);
+            var res = await test.GetById(1).ToListAsync();
+            foreach (var a in res)
+            {
+                var x = a.GetType().Name;
 
-            //}
-            //var res2 = res.Select(x => (object)x).ToList();
+            }
+            var res2 = res.Select(x => (object)x).ToList();*/
             return Ok();
         }
     }

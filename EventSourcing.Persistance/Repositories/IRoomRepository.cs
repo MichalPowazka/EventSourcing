@@ -11,4 +11,6 @@ public interface IRoomRepository
     Task<Room> GetAsync(int id);
     Task<int> BookingRoom(RoomToReservation roomToReservation);
 
+    Task<List<Room>> GetAllAsync();
+
 }

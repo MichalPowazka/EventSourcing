@@ -49,5 +49,11 @@ namespace EventSourcing.Persistance.Repositories
             return result;
             //inclue themiclude
         }
+
+        public async Task<List<Room>> GetAllAsync()
+        {
+            var result = await _bookingDbContext.Rooms.ToListAsync();
+            return result;
+        }
     }
 }

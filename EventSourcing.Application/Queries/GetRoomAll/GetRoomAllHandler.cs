@@ -9,8 +9,23 @@ using System.Threading.Tasks;
 
 namespace EventSourcing.Application.Queries.GetRoomAll
 {
-    public class GetRoomAllHandler(IRoomRepository _roomRepository) : IRequestHandler<GetRoomByIdQueryRequest, GetRoomByIdResponse>
+    public class GetRoomAllHandler(IRoomRepository _roomRepository) : IRequestHandler<GetRoomAllQueryRequest, GetRoomAllResponse>
     {
-    
+        public async Task<GetRoomAllResponse> Handle(GetRoomAllQueryRequest request, CancellationToken cancellationToken)
+        {
+            var result = await _roomRepository.GetAllAsync();
+            if (result == null)
+            {
+
+            }
+
+
+
+
+            return new GetRoomAllResponse()
+            {
+                ListRooms = result.ToList(),
+            };
+        }
     }
 }
