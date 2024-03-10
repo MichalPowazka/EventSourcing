@@ -2,7 +2,9 @@
 using EventSourcing.Application.Commands.Register;
 using EventSourcing.Application.Commands.RestorePassword;
 using EventSourcing.Application.Commands.UpdateUser;
+using EventSourcing.Application.Queries.GetUserHistory;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 
@@ -45,7 +47,15 @@ namespace EventSourcingApi.Controllers
         public async Task<ActionResult> RestorePassword(RestorePasswordRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok();
+            return Ok(result);
+        }
+
+        [HttpGet]
+
+        public async Task<ActionResult> GetUserHistory([FromQuery] GetUserHistoryQueryRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
         }
     }
 }

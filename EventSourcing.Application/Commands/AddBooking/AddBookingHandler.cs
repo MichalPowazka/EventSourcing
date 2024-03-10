@@ -1,6 +1,8 @@
 ﻿using EventSourcing.Domain.Events;
+using EventSourcing.Domain.Events.Reservations;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EventSourcing.Application.Commands.AddBooking
 {
@@ -12,12 +14,17 @@ namespace EventSourcing.Application.Commands.AddBooking
             //powiaznie rezerwacji z pokojem
 
 
-            var @event = new CreateReservationEvenet()
+            var @event = new ReservationEvent()
             {
                 Id = request.Id,
                 Reservation = Guid.NewGuid(),
-                DateFrom = request.DateFrom,
-                DateTo = request.DateTo,
+                Type  = ReseravatioEventType.Create, 
+                CreateData = new CreateReservationEvenet()
+                {
+                    DateFrom = request.DateFrom,
+                    DateTo = request.DateTo,
+                },
+             
             };
 
             //powiaznie rezerwacji z pokojem

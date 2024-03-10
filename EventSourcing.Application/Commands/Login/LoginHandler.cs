@@ -7,6 +7,8 @@ namespace EventSourcing.Application.Commands.Login
         public Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
+            //ZApis eventu do event store
+
         }
     }
 }

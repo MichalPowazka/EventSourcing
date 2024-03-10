@@ -1,4 +1,4 @@
-﻿using EventSourcing.Domain.Events;
+﻿using EventSourcing.Domain.Events.Reservations;
 
 namespace EventSourcing.Persistance.Repositories;
 

@@ -1,28 +1,27 @@
-﻿using EventSourcing.Domain.Events;
+﻿using EventSourcing.Domain.Events.Reservations;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EventSourcing.Application.Commands.UpdateReservation
+namespace EventSourcing.Application.Commands.UpdateReservation;
+
+public class UpdateReservationHandler(IReservationRepository _reservationRepository) : IRequestHandler<UpdateReservationRequest, int>
 {
-    public class UpdateReservationHandler(IReservationRepository _reservationRepository) : IRequestHandler<UpdateReservationRequest, int>
+    public async Task<int> Handle(UpdateReservationRequest request, CancellationToken cancellationToken)
     {
-        public async Task<int> Handle(UpdateReservationRequest request, CancellationToken cancellationToken)
+        var @event = new ReservationEvent()
         {
-            var @event = new UpdateReservationEvent()
+            Id = request.Id,
+            Type = ReseravatioEventType.Update,
+            UpdateData = new UpdateReservationEvent()
             {
-                Id = request.Id,
                 DateFrom = request.DateFrom,
                 DateTo = request.DateTo,
-            };
+            }
 
-            await _reservationRepository.Save(@event);
+        };
 
-            return request.Id;
-        }
+        await _reservationRepository.Save(@event);
+
+        return request.Id;
     }
 }

@@ -1,37 +1,24 @@
-﻿using EventSourcing.Domain.Events;
+﻿using EventSourcing.Domain.Events.Reservations;
 using EventStore.Client;
 using System.Text.Json;
 
 namespace EventSourcing.Persistance.Repositories;
-
-internal class ReservationRepository(EventStoreClient _client) : IReservationRepository
+public class ReservationRepository(EventStoreClient _client) : IReservationRepository
 {
     private const string stream = "Reservation - ";
     public async IAsyncEnumerable<ReservationEvent> GetById(string id)
     {
-        var readResult =  await _client.ReadStreamAsync(Direction.Forwards, id, StreamPosition.Start, 100).ToListAsync();
-        
+        var readResult = await _client.ReadStreamAsync(Direction.Forwards, id, StreamPosition.Start, 100).ToListAsync();
+
         //seralizacja na kilku typów obiektów na podstawie Event Type
         foreach (var resolved in readResult)
-        {
-            switch (resolved.Event.EventType)
-            {
-                case "CreateReservationEvenet":
-                    yield    return JsonSerializer.Deserialize<CreateReservationEvenet>(resolved.Event.Data.Span);
-                    break;
-                case "CancelReservationEvent":
-                    yield return JsonSerializer.Deserialize<CancelReservationEvent>(resolved.Event.Data.Span);
-                    break;
-                default:
-                    yield return JsonSerializer.Deserialize<ReservationEvent>(resolved.Event.Data.Span);
-                    break;
-            }
-
+        { var a = JsonSerializer.Deserialize<ReservationEvent>(resolved.Event.Data.Span);
+            yield return a;
         }
     }
 
     public async Task Save(ReservationEvent reservationEvent)
-    { 
+    {
         var streamName = reservationEvent.Reservation.ToString();
         var eventData = new EventData(
             Uuid.NewUuid(),

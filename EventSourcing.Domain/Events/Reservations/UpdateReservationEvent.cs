@@ -1,8 +1,8 @@
 ﻿using EventSourcing.Domain.Entities;
 
-namespace EventSourcing.Domain.Events
+namespace EventSourcing.Domain.Events.Reservations
 {
-    public class UpdateReservationEvent : ReservationEvent
+    public class UpdateReservationEvent
     {
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }

@@ -18,19 +18,28 @@ namespace EventSourcing.Application.Commands.RestorePassword
             if (user == null)
             {
                 // Obsłuż błąd gdy użytkownik nie istnieje
+
                 return new ResotrePasswordResponse { Success = false, Message = "Użytkownik nie istnieje." };
             }
 
             // Zaktualizuj hasło użytkownika
             if (!string.IsNullOrEmpty(request.NewPassword))
             {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var result = await _userManager.ResetPasswordAsync(user, token, request.NewPassword);
+                var result = await _userManager.ChangePasswordAsync(user, request.Password, request.NewPassword);
+                //var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                //var result = await _userManager.ResetPasswordAsync(user, token, request.NewPassword);
                 if (!result.Succeeded)
                 {
+
                     // Obsłuż błąd gdy nie udało się zaktualizować hasła
                     return new ResotrePasswordResponse { Success = false, Message = "Nie udało się zaktualizować hasła użytkownika." };
                 }
+                else
+                {
+                    //ZApis eventu do event store
+
+                }
+
             }
 
             // Jeśli chcesz zaimplementować także aktualizację innych danych użytkownika, możesz to zrobić tutaj
@@ -41,5 +50,5 @@ namespace EventSourcing.Application.Commands.RestorePassword
 
 
     }
-    
+
 }

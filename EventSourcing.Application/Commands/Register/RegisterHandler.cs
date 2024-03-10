@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EventSourcing.Application.Commands.Register
 {
-    public class RegisterHandler(UserManager<User> _userManager, RoleManager<Role> _roleMenager) : IRequestHandler<RegisterRequest, RegisterResponse>
+    public class RegisterHandler(UserManager<User> _userManager) : IRequestHandler<RegisterRequest, RegisterResponse>
     {
         public async Task<RegisterResponse> Handle(RegisterRequest request, CancellationToken cancellationToken)
         {
@@ -15,7 +15,9 @@ namespace EventSourcing.Application.Commands.Register
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Email = request.Email,
-                UserName = request.Email
+                UserName = request.Email,
+                StreamId = Guid.NewGuid().ToString()
+
             };
 
             try
@@ -25,11 +27,14 @@ namespace EventSourcing.Application.Commands.Register
                 //    await _roleMenager.CreateAsync(new Role() { Name = "User" });
                 //}
 
+                //ZApis eventu do event store
 
 
                 var result = await _userManager.CreateAsync(user, request.Password);
 
-            }catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 var a = ex;
             }
 

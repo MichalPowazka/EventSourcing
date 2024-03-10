@@ -3,6 +3,7 @@ using EventSourcing.Persistance;
 using EventSourcing.Persistance.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,10 @@ if (app.Environment.IsDevelopment())
 }
 
 
+app.UseCors(policy => policy.WithOrigins("http://localhost:3000")
+        .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        .AllowAnyHeader()
+        .AllowCredentials());
 
 app.UseHttpsRedirection();
 
