@@ -2,8 +2,6 @@
 using EventSourcing.Application.Commands.CancelReservation;
 using EventSourcing.Application.Commands.UpdateReservation;
 using EventSourcing.Application.Queries.CheckAvailability;
-using EventSourcing.Domain;
-using EventSourcing.Persistance.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -54,7 +52,6 @@ namespace EventSourcingApi.Controllers
         }
 
         [HttpGet]
-
         public async Task<ActionResult> CheckAvailability([FromQuery] CheckAvailabilityQueryRequest request)
         {
             var result = await _mediator.Send(request);

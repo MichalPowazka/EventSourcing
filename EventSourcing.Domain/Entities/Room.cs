@@ -12,6 +12,7 @@
         public required string PostCode { get; set; }
         public List<RoomToReservation> Reservations { get; set; }
         public List<Opinion> Opinions { get; set; }
+        public string ControlValue { get; set; }
 
     }
 }

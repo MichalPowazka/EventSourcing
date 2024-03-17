@@ -1,40 +1,53 @@
-﻿using EventSourcing.Domain.Events;
-using EventSourcing.Domain.Events.Reservations;
+﻿using EventSourcing.Application.Services;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EventSourcing.Application.Commands.AddBooking
 {
-    public class AddBookingHandler(IReservationRepository _reservationRepository, IRoomRepository _roomRepository) : IRequestHandler<AddBookingRequest, int>
+    public class AddBookingHandler(IReservationRepository _reservationRepository, IRoomRepository _roomRepository, IReseravtionService _reseravtionService) : IRequestHandler<AddBookingRequest, int>
     {
         public async Task<int> Handle(AddBookingRequest request, CancellationToken cancellationToken)
         {
             //
             //powiaznie rezerwacji z pokojem
-
-
-            var @event = new ReservationEvent()
+            // pobiieramy pokok
+            var isAvaible = await _reseravtionService.IsAvaible(request.RoomId, request.DateFrom, request.DateTo);
+            if (!isAvaible)
             {
-                Id = request.Id,
-                Reservation = Guid.NewGuid(),
-                Type  = ReseravatioEventType.Create, 
-                CreateData = new CreateReservationEvenet()
+                //rzucasz wyjatątek
+                return -1;
+
+            }
+            var room = await _roomRepository.GetAsync(request.RoomId);
+            if (request.ControlValue != room.ControlValue || room.Reservations.Count != request.ResevationCount) 
+            {
+                isAvaible = await _reseravtionService.IsAvaible(request.RoomId, request.DateFrom, request.DateTo);
+                if (isAvaible)
                 {
-                    DateFrom = request.DateFrom,
-                    DateTo = request.DateTo,
-                },
-             
-            };
-
-            //powiaznie rezerwacji z pokojem
-            await _roomRepository.BookingRoom(new Domain.Entities.RoomToReservation()
+                    var res =  await _reseravtionService.AddReservation(request, room);
+                    if (!res)
+                    {
+                        //cos poszlo nie tak
+                    }
+                }
+                else
+                {
+                    //obsluzyc niedostspneosc
+                }
+            }
+            else
             {
-                RoomId = request.RoomId,
-                StreamId = @event.Reservation.ToString(),
-            });
+                var res = await _reseravtionService.AddReservation(request, room);
+                if (!res)
+                {
+                    //cos poszlo nie tak
+                }
 
-            await _reservationRepository.Save(@event);
+            }
+
+            //tranzacje
+
+
 
             return request.Id;
 

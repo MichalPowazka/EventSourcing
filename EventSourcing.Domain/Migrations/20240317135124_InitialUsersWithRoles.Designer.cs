@@ -4,6 +4,7 @@ using EventSourcing.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventSourcing.Domain.Migrations
 {
     [DbContext(typeof(BookingDbContext))]
-    partial class BookingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240317135124_InitialUsersWithRoles")]
+    partial class InitialUsersWithRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,9 +110,6 @@ namespace EventSourcing.Domain.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ControlValue")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -234,13 +234,13 @@ namespace EventSourcing.Domain.Migrations
                         {
                             Id = 99,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1e813edd-207c-47c5-b5fa-050a37873a4b",
+                            ConcurrencyStamp = "5a874a3e-5a45-47a0-8b43-ec555a5f5b13",
                             Email = "admin@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJvAK2F99L+Y0v85FHTk6rPZ9Jj4DDJra9hV0/yjNhox/tiyf/wBKlzfsd4ci7h7VQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHVEr1lQIjYa9Nk0biyen2yYFauvIgExL5VW3sdPABaN8Y5QUCgNJI2XYs7Z6i0XYQ==",
                             PhoneNumberConfirmed = false,
                             StreamId = "00000000-0000-0000-0000-000000000000",
                             TwoFactorEnabled = false,
