@@ -9,7 +9,6 @@ public interface IRoomRepository
 
     Task<int> UpdateAsync(Room room);
     Task<Room> GetAsync(int id);
-    Task<int> BookingRoom(RoomToReservation roomToReservation);
 
     Task<List<Room>> GetAllAsync();
 

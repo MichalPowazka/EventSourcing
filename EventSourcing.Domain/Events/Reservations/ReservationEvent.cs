@@ -2,8 +2,9 @@
 {
     public class ReservationEvent
     {
+        public required string ReservationUniqueid { get; set; }
         public int Id { get; set; }
-        public Guid Reservation { get; set; }
+        public string RoomStream { get; set; }
         public DateTime TimeStamp { get; set; }
         public ReseravatioEventType Type { get; set; }
         public CreateReservationEvenet CreateData { get; set; }

@@ -10,5 +10,6 @@ namespace EventSourcing.Application.Dto
     {
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
+        public string ReservationUniqueId { get; set; }
     }
 }

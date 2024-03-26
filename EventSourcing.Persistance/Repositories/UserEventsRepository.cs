@@ -20,13 +20,15 @@ namespace EventSourcing.Persistance.Repositories
 
         public async Task Save(UserEvent reservationEvent)
         {
+            var readResult = await _client.ReadStreamAsync(Direction.Forwards, reservationEvent.UniqueId.ToString(), StreamPosition.Start, 100).ToListAsync();
+            var clientOneRevision = readResult.Last().Event.EventNumber.ToUInt64();
             var streamName = reservationEvent.UniqueId.ToString();
             var eventData = new EventData(
                 Uuid.NewUuid(),
                 reservationEvent.GetType().Name,
                 JsonSerializer.SerializeToUtf8Bytes(reservationEvent));
 
-            await _client.AppendToStreamAsync(streamName, StreamState.Any, new[] { eventData });
+            await _client.AppendToStreamAsync(streamName, clientOneRevision, new[] { eventData });
         }
 
 

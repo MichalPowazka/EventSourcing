@@ -4,52 +4,72 @@ using MediatR;
 
 namespace EventSourcing.Application.Commands.AddBooking
 {
-    public class AddBookingHandler(IReservationRepository _reservationRepository, IRoomRepository _roomRepository, IReseravtionService _reseravtionService) : IRequestHandler<AddBookingRequest, int>
+    public class AddBookingHandler(IReservationRepository _reservationRepository, IRoomRepository _roomRepository, IReseravtionService _reseravtionService) : IRequestHandler<AddBookingRequest, AddBookingResponse>
     {
-        public async Task<int> Handle(AddBookingRequest request, CancellationToken cancellationToken)
+        public async Task<AddBookingResponse> Handle(AddBookingRequest request, CancellationToken cancellationToken)
         {
-            //
-            //powiaznie rezerwacji z pokojem
-            // pobiieramy pokok
-            var isAvaible = await _reseravtionService.IsAvaible(request.RoomId, request.DateFrom, request.DateTo);
-            if (!isAvaible)
-            {
-                //rzucasz wyjatątek
-                return -1;
-
-            }
-            var room = await _roomRepository.GetAsync(request.RoomId);
-            if (request.ControlValue != room.ControlValue || room.Reservations.Count != request.ResevationCount) 
-            {
-                isAvaible = await _reseravtionService.IsAvaible(request.RoomId, request.DateFrom, request.DateTo);
-                if (isAvaible)
+                //
+                //powiaznie rezerwacji z pokojem
+                // pobiieramy pokok
+                var isAvaible = await _reseravtionService.IsAvaible(request.RoomId, request.DateFrom, request.DateTo);
+                if (!isAvaible)
                 {
-                    var res =  await _reseravtionService.AddReservation(request, room);
-                    if (!res)
+                    //rzucasz wyjatątek
+                    return new AddBookingResponse()
                     {
-                        //cos poszlo nie tak
+                        IsSuccess = false,
+                        Message = "Pokój niedostępny"
+                    };
+
+                }
+                var room = await _roomRepository.GetAsync(request.RoomId);
+                if (request.ControlValue != room.ControlValue)
+                {
+                    isAvaible = await _reseravtionService.IsAvaible(request.RoomId, request.DateFrom, request.DateTo);
+                    if (isAvaible)
+                    {
+                        var res = await _reseravtionService.AddReservation(request, room);
+                        if (!res)
+                        {
+                            return new AddBookingResponse()
+                            {
+                                IsSuccess = false,
+                                Message = "Odśwież stronę"
+                            };
+                        }
                     }
+                    else
+                    {
+                    return new AddBookingResponse()
+                    {
+                        IsSuccess = false,
+                        Message = "Pokój niedostępny"
+                    };
+                }
                 }
                 else
                 {
-                    //obsluzyc niedostspneosc
+                    var res = await _reseravtionService.AddReservation(request, room);
+                    if (!res)
+                    {
+                    return new AddBookingResponse()
+                    {
+                        IsSuccess = false,
+                        Message = "Coś poszło nie tak . . ."
+                    };
                 }
-            }
-            else
+
+                }
+
+                var a = _reseravtionService.GetReservationsForRoom(request.RoomStreamId);
+
+
+            
+
+            return new AddBookingResponse()
             {
-                var res = await _reseravtionService.AddReservation(request, room);
-                if (!res)
-                {
-                    //cos poszlo nie tak
-                }
-
-            }
-
-            //tranzacje
-
-
-
-            return request.Id;
+                IsSuccess = true,
+            };
 
 
 

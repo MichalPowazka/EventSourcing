@@ -4,6 +4,7 @@ using EventSourcing.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventSourcing.Domain.Migrations
 {
     [DbContext(typeof(BookingDbContext))]
-    partial class BookingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240320145420_ImagesForRoom")]
+    partial class ImagesForRoom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,9 +125,6 @@ namespace EventSourcing.Domain.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoomStream")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Street")
@@ -261,13 +261,13 @@ namespace EventSourcing.Domain.Migrations
                         {
                             Id = 99,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8b365e8b-be6a-448a-be35-faca65bb8492",
+                            ConcurrencyStamp = "80d631c6-0d9f-4098-af42-6605a5a2ce1f",
                             Email = "admin@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBp6sfLQEGq4wGO5Vio0CUVA1kpnUKurEkWS1zAurl+Mv+mhJmuG86G3K/MIIsqkyg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJRBNqsjckfQwGrYyF4FxiwXl1wlNoFkJQ2topuxAjgSOptCQVQymHjzKr2llpA/hQ==",
                             PhoneNumberConfirmed = false,
                             StreamId = "00000000-0000-0000-0000-000000000000",
                             TwoFactorEnabled = false,
@@ -410,7 +410,7 @@ namespace EventSourcing.Domain.Migrations
             modelBuilder.Entity("EventSourcing.Domain.Entities.RoomToReservation", b =>
                 {
                     b.HasOne("EventSourcing.Domain.Entities.Room", "Room")
-                        .WithMany()
+                        .WithMany("Reservations")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -474,6 +474,8 @@ namespace EventSourcing.Domain.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Opinions");
+
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

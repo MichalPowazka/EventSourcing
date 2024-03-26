@@ -16,7 +16,8 @@ public class ReservationService(IRoomRepository _roomRepository, IReservationRep
             var @event = new ReservationEvent()
             {
                 Id = request.Id,
-                Reservation = Guid.NewGuid(),
+                ReservationUniqueid = Guid.NewGuid().ToString(),
+                RoomStream = request.RoomStreamId,
                 Type = ReseravatioEventType.Create,
                 CreateData = new CreateReservationEvenet()
                 {
@@ -25,16 +26,13 @@ public class ReservationService(IRoomRepository _roomRepository, IReservationRep
                 },
 
             };
-
+            await _reservationRepository.Save(@event);
             room.ControlValue = new Guid().ToString();
             await _roomRepository.UpdateAsync(room);
-            await _roomRepository.BookingRoom(new Domain.Entities.RoomToReservation()
-            {
-                RoomId = request.RoomId,
-                StreamId = @event.Reservation.ToString(),
-            });
+
             return true;
-        }catch
+        }
+        catch(Exception ex) 
         {
             return false;
         }
@@ -42,39 +40,45 @@ public class ReservationService(IRoomRepository _roomRepository, IReservationRep
 
     }
 
+    public async Task<List<ReservationDto>> GetReservationsForRoom(string roomStream)
+    {
+        var result = new List<ReservationDto>();
+        var reservationEvents = (await _reservationRepository.GetById(roomStream).ToListAsync()).GroupBy(x => x.ReservationUniqueid).ToList();
+        reservationEvents = reservationEvents.Where(x => !x.Any(x => x.Type == ReseravatioEventType.Cancel)).ToList();
+
+        foreach (var resevation in reservationEvents)
+        {
+            var lastEvent = resevation.Last();
+            if (lastEvent.Type == ReseravatioEventType.Create)
+            {
+                result.Add(new ReservationDto()
+                {
+                    DateFrom = lastEvent.CreateData.DateFrom,
+                    DateTo = lastEvent.CreateData.DateTo,
+                    ReservationUniqueId = resevation.Key
+                });
+            }
+
+            if (lastEvent.Type == ReseravatioEventType.Update)
+            {
+                result.Add(new ReservationDto()
+                {
+                    DateFrom = lastEvent.UpdateData.DateFrom,
+                    DateTo = lastEvent.UpdateData.DateTo,
+                    ReservationUniqueId = resevation.Key
+                });
+            }
+        }
+        return result;
+    }
+
     public async Task<bool> IsAvaible(int roomId, DateTime dateFrom, DateTime dateTo)
     {
         var res = true;
         var reservationList = new List<ReservationDto>();
         var room = await _roomRepository.GetAsync(roomId);
-        //pobrac rezewacje pokoju
-        foreach (var reservation in room.Reservations)
-        {
-            if (!(await _reservationRepository.GetById(reservation.StreamId).ToListAsync()).Any(x => x.Type == ReseravatioEventType.Cancel))
-            {
-                if (!(await _reservationRepository.GetById(reservation.StreamId).ToListAsync()).Any(x => x.Type == ReseravatioEventType.Update))
-                {
-                    reservationList.Add(new ReservationDto()
-                    {
-                        DateFrom = ((await _reservationRepository.GetById(reservation.StreamId).ToListAsync()).First().CreateData).DateFrom,
-                        DateTo = ((await _reservationRepository.GetById(reservation.StreamId).ToListAsync()).First().CreateData).DateTo
+        reservationList = await GetReservationsForRoom(room.RoomStream);
 
-
-                    });
-                }
-                else
-                {
-
-                    reservationList.Add(new ReservationDto()
-                    {
-                        DateFrom = ((await _reservationRepository.GetById(reservation.StreamId).ToListAsync()).Last().UpdateData).DateFrom,
-                        DateTo = ((await _reservationRepository.GetById(reservation.StreamId).ToListAsync()).Last().UpdateData).DateTo
-
-
-                    });
-                }
-            }
-        }
         var overlappingReservations = reservationList.Any(x =>
         (dateFrom >= x.DateFrom && dateFrom <= x.DateTo) ||   // data początkowa wewnątrz istniejącej rezerwacji
         (dateTo >= x.DateFrom && dateTo <= x.DateTo) ||       // data końcowa wewnątrz istniejącej rezerwacji

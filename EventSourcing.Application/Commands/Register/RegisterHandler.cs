@@ -1,10 +1,12 @@
 ﻿using EventSourcing.Domain.Entities;
+using EventSourcing.Domain.Events.Users;
+using EventSourcing.Persistance.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace EventSourcing.Application.Commands.Register
 {
-    public class RegisterHandler(UserManager<User> _userManager) : IRequestHandler<RegisterRequest, RegisterResponse>
+    public class RegisterHandler(UserManager<User> _userManager, IUserEventsRepository _userEventsRepository) : IRequestHandler<RegisterRequest, RegisterResponse>
     {
         public async Task<RegisterResponse> Handle(RegisterRequest request, CancellationToken cancellationToken)
         {
@@ -22,15 +24,22 @@ namespace EventSourcing.Application.Commands.Register
 
             try
             {
-                //if (!await _roleMenager.RoleExistsAsync("User"))
-                //{
-                //    await _roleMenager.CreateAsync(new Role() { Name = "User" });
-                //}
 
-                //ZApis eventu do event store
 
 
                 var result = await _userManager.CreateAsync(user, request.Password);
+                if (result.Succeeded)
+                {
+                    var @event = new UserEvent()
+                    {
+                        UniqueId = user.StreamId,
+                        Date = DateTime.UtcNow,
+                        User = user,
+                        Type = UserEventType.Register
+                    };
+                    await _userEventsRepository.Save(@event);
+                }
+                await _userManager.AddToRoleAsync(user, "User");
 
             }
             catch (Exception ex)

@@ -15,7 +15,8 @@ public class AddRoomHandler(IRoomRepository _roomRepository) : IRequestHandler<A
             Street = request.Street,
             HouseNumber = request.HouseNumber,
             ApartamentNumber = request.ApartamentNumber,
-            PostCode = request.PostCode
+            PostCode = request.PostCode,
+            RoomStream = Guid.NewGuid().ToString()
         };
         await _roomRepository.AddAsync(room);
         return new AddRoomResponse() { Success = true };

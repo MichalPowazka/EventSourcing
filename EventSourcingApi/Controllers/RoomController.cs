@@ -2,23 +2,22 @@
 using EventSourcing.Application.Commands.UpdateRoom;
 using EventSourcing.Application.Queries.GetRoomAll;
 using EventSourcing.Application.Queries.GetRoomById;
+using EventSourcing.Application.Commands.UploadFile;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventSourcingApi.Controllers
 {
+
     [Route("[controller]/[action]")]
     [ApiController]
 
     public class RoomController(IMediator _mediator) : ControllerBase
     {
-        //Post do dodaniwa pokoju + command do obslugi
-        //Put do update pokoju + command do opslugi
-        //Get do pobrania pokoju po id + querry do pobrania
-        //Get do listy pokojów + querry do pobrania
-        //Upload Zdjec do pokoju
-        [HttpPost("add-room")]     
-        
+
+        [HttpPost("add-room")]
+
         public async Task<ActionResult> AddRoom([FromBody] AddRoomRequest request)
         {
             var result = await _mediator.Send(request);
@@ -32,6 +31,7 @@ namespace EventSourcingApi.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("get-room")]
 
         public async Task<ActionResult> GetRoomById([FromQuery] GetRoomByIdQueryRequest request)
@@ -41,6 +41,7 @@ namespace EventSourcingApi.Controllers
         }
 
         [HttpGet("get-room-all")]
+        [Authorize]
         public async Task<ActionResult> GetRoomAll([FromQuery] GetRoomAllQueryRequest request)
         {
             var result = await _mediator.Send(request);
@@ -49,15 +50,10 @@ namespace EventSourcingApi.Controllers
 
 
         [HttpPost("upload-file")]
-        public async Task<ActionResult> UploadFile(IFormFile form)
+        public async Task<ActionResult> UploadFile(UploadFileRequest request)
         {
-            var a = form;
-            string filePath = Path.Combine(@"D:\", form.FileName);
-            using (Stream fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await form.CopyToAsync(fileStream);
-            }
-                return Ok();
+            var result = await _mediator.Send(request);
+            return Ok(result);
         }
 
 

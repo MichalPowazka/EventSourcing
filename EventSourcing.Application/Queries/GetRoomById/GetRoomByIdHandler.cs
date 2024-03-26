@@ -1,4 +1,6 @@
-﻿using EventSourcing.Persistance.Repositories;
+﻿using EventSourcing.Application.Dto;
+using EventSourcing.Application.Services;
+using EventSourcing.Persistance.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 namespace EventSourcing.Application.Queries.GetRoomById
 {
 
-    public class GetRoomByIdHandler(IRoomRepository _roomRepository) : IRequestHandler<GetRoomByIdQueryRequest, GetRoomByIdResponse>
+    public class GetRoomByIdHandler(IRoomRepository _roomRepository, IReseravtionService _reservationService) : IRequestHandler<GetRoomByIdQueryRequest, GetRoomByIdResponse>
     {
 
        public async Task<GetRoomByIdResponse> Handle(GetRoomByIdQueryRequest request, CancellationToken cancellationToken)
@@ -19,6 +21,9 @@ namespace EventSourcing.Application.Queries.GetRoomById
             {
 
             }
+
+            var reservations = new List<ReservationDto>();
+            reservations = await _reservationService.GetReservationsForRoom(result.RoomStream);
 
             return new GetRoomByIdResponse() 
             {
@@ -30,8 +35,9 @@ namespace EventSourcing.Application.Queries.GetRoomById
                 HouseNumber = result.HouseNumber,
                 ApartamentNumber = result.ApartamentNumber,
                 PostCode = result.PostCode,
-                Reservations = result.Reservations,
-                Opinions = result.Opinions
+                Reservations = reservations,
+                Opinions = result.Opinions,
+                RoomStream = result.RoomStream, 
             };
         }
     }

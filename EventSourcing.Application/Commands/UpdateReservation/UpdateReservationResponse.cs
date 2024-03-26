@@ -8,5 +8,7 @@ namespace EventSourcing.Application.Commands.UpdateReservation
 {
     public class UpdateReservationResponse
     {
+        public bool IsSuccess {  get; set; }
+        public string Message { get; set; }
     }
 }

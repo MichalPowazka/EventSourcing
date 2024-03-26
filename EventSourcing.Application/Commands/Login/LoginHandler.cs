@@ -1,5 +1,7 @@
 ﻿using EventSourcing.Domain.Entities;
+using EventSourcingApi;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -9,7 +11,7 @@ using System.Text;
 
 namespace EventSourcing.Application.Commands.Login;
 
-public class LoginHandler(UserManager<User> _userManager, IConfiguration _configuration) : IRequestHandler<LoginRequest, LoginResponse>
+public class LoginHandler(UserManager<User> _userManager, JwtOptions jwtOptions) : IRequestHandler<LoginRequest, LoginResponse>
 {
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
     {
@@ -30,13 +32,13 @@ public class LoginHandler(UserManager<User> _userManager, IConfiguration _config
     private string GenerateJwtToken(User user)
     {
 
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:JwtKey"]));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new[]
         {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.UserData, Newtonsoft.Json.JsonConvert.SerializeObject(user))
+            
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -44,7 +46,9 @@ public class LoginHandler(UserManager<User> _userManager, IConfiguration _config
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(2),
-            SigningCredentials = credentials
+            SigningCredentials = credentials,
+            Audience = jwtOptions.Audience,
+            Issuer = jwtOptions.Issuer,
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);

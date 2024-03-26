@@ -35,7 +35,7 @@ namespace EventSourcing.Persistance.Repositories
         public async Task<int> BookingRoom(RoomToReservation roomToReservation)
         {
             var r = await GetAsync(roomToReservation.RoomId);
-            r.Reservations.Add(roomToReservation);
+            //r.Reservations.Add(roomToReservation);
             _bookingDbContext.SaveChanges();
             return roomToReservation.Id;
 
@@ -45,7 +45,7 @@ namespace EventSourcing.Persistance.Repositories
 
         public async Task<Room> GetAsync(int id)
         {   //pobieranie id
-            var result = await _bookingDbContext.Rooms.Include(x => x.Reservations).SingleOrDefaultAsync(a => a.Id == id);
+            var result = await _bookingDbContext.Rooms.SingleOrDefaultAsync(a => a.Id == id);
             return result;
             //inclue themiclude
         }

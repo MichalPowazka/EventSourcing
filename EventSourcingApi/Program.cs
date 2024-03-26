@@ -2,11 +2,14 @@ using EventSourcing.Application.Services;
 using EventSourcing.Domain.Entities;
 using EventSourcing.Persistance;
 using EventSourcing.Persistance.Repositories;
+using EventSourcingApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +23,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IRoomRepository, RoomRepository>();
 builder.Services.AddTransient<IReseravtionService, ReservationService>();
+builder.Services.AddTransient<IReservationRepository, ReservationRepository>();
+
+
+var jwtOptions = builder.Configuration
+    .GetSection("JwtOptions")
+    .Get<JwtOptions>();
+builder.Services.AddSingleton(jwtOptions);
+
+
 
 
 builder.Services.AddDbContext<BookingDbContext>(options =>
@@ -33,20 +45,38 @@ builder.Services.AddIdentity<User, Role>()
 
 
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("outh2", new OpenApiSecurityScheme
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]))
-        };
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
     });
+
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
+
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = "Bearer";
+    option.DefaultScheme = "Bearer";
+    option.DefaultChallengeScheme = "Bearer";
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false; //
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = jwtOptions.Issuer,
+        ValidAudience = jwtOptions.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey)),
+    };
+});
+
+
 
 
 var app = builder.Build();
@@ -59,13 +89,15 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.UseCors(policy => policy.WithOrigins("http://localhost:3000")
+/*app.UseCors(policy => policy.WithOrigins("http://localhost:3000")
         .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
         .AllowAnyHeader()
-        .AllowCredentials());
+        .AllowCredentials());*/
 
 app.UseHttpsRedirection();
 
+//testowe wywalenie
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

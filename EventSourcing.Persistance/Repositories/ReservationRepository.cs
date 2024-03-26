@@ -12,40 +12,37 @@ public class ReservationRepository(EventStoreClient _client) : IReservationRepos
 
         //seralizacja na kilku typów obiektów na podstawie Event Type
         foreach (var resolved in readResult)
-        { var a = JsonSerializer.Deserialize<ReservationEvent>(resolved.Event.Data.Span);
+        {
+            var a = JsonSerializer.Deserialize<ReservationEvent>(resolved.Event.Data.Span);
             yield return a;
         }
     }
 
     public async Task Save(ReservationEvent reservationEvent)
     {
-        var streamName = reservationEvent.Reservation.ToString();
-        var eventData = new EventData(
-            Uuid.NewUuid(),
-            reservationEvent.GetType().Name,
-            JsonSerializer.SerializeToUtf8Bytes(reservationEvent));
 
-        await _client.AppendToStreamAsync(streamName, StreamState.Any, new[] { eventData });
+            var readResult = await _client.ReadStreamAsync(Direction.Forwards, reservationEvent.RoomStream.ToString(), StreamPosition.Start, 100).ToListAsync();
+            var clientOneRevision = readResult.Last().Event.EventNumber.ToUInt64();
+
+            var streamName = reservationEvent.RoomStream.ToString();
+            var eventData = new EventData(
+                Uuid.NewUuid(),
+                reservationEvent.GetType().Name,
+                JsonSerializer.SerializeToUtf8Bytes(reservationEvent));
+            await _client.AppendToStreamAsync(streamName, clientOneRevision, new[] { eventData });
+
+
+        // Sprawdzanie 
+        //    var res2 = reservationEvent;
+        //   var eventData2 = new EventData(
+        //Uuid.NewUuid(),
+        //reservationEvent.GetType().Name,
+        //JsonSerializer.SerializeToUtf8Bytes(res2));
+        //    var b = await _client.AppendToStreamAsync(streamName, clientOneRevision, new[] { eventData2 });
+  
+
+
     }
 
-    public async Task Test()
-    {
-        var eventData = new EventData(
-            Uuid.NewUuid(),
-           "createRoom",
-            JsonSerializer.SerializeToUtf8Bytes(new ReservationEvent()
-            {
-                Id = 1,
-                TimeStamp = DateTime.UtcNow
-            }));
-        var streamName = $"{stream}{1}";
 
-        await _client.AppendToStreamAsync(
-            streamName,
-            StreamState.NoStream,
-            new List<EventData> {
-        eventData
-            }
-        );
-    }
 }

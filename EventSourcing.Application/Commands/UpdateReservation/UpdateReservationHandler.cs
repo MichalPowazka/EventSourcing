@@ -1,27 +1,58 @@
-﻿using EventSourcing.Domain.Events.Reservations;
+﻿using EventSourcing.Application.Commands.AddBooking;
+using EventSourcing.Application.Services;
+using EventSourcing.Domain.Events.Reservations;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventSourcing.Application.Commands.UpdateReservation;
 
-public class UpdateReservationHandler(IReservationRepository _reservationRepository) : IRequestHandler<UpdateReservationRequest, int>
+public class UpdateReservationHandler(IReservationRepository _reservationRepository, IReseravtionService _reseravtionService) : IRequestHandler<UpdateReservationRequest, UpdateReservationResponse>
 {
-    public async Task<int> Handle(UpdateReservationRequest request, CancellationToken cancellationToken)
+    public async Task<UpdateReservationResponse> Handle(UpdateReservationRequest request, CancellationToken cancellationToken)
     {
-        var @event = new ReservationEvent()
+        try
         {
-            Id = request.Id,
-            Type = ReseravatioEventType.Update,
-            UpdateData = new UpdateReservationEvent()
+            var isAvaible = await _reseravtionService.IsAvaible(request.RoomId, request.DateFrom, request.DateTo);
+            if(!isAvaible)
             {
-                DateFrom = request.DateFrom,
-                DateTo = request.DateTo,
+                return new UpdateReservationResponse()
+                {
+                    IsSuccess = false,
+                    Message = "Pokój niedostępny"
+                };
             }
+            var @event = new ReservationEvent()
+            {
+                Id = request.Id,
+                ReservationUniqueid = request.ReservationUniqueId,
+                RoomStream = request.RoomStreamId,
+                Type = ReseravatioEventType.Update,
+                UpdateData = new UpdateReservationEvent()
+                {
+                    DateFrom = request.DateFrom,
+                    DateTo = request.DateTo,
+                }
 
-        };
+            };
 
-        await _reservationRepository.Save(@event);
+            await _reservationRepository.Save(@event);
 
-        return request.Id;
+            return new UpdateReservationResponse()
+            {
+                IsSuccess = true,
+                Message = "Aktualizacja powiodła się",
+            };
+
+        }
+        catch(Exception ex)
+        {
+            return new UpdateReservationResponse()
+            {
+                IsSuccess = false,
+                Message = ex.Message,
+            };
+        }
+        
     }
 }

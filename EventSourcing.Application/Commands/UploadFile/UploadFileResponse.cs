@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventSourcing.Application.Commands.CancelReservation
+namespace EventSourcing.Application.Commands.UploadFile
 {
-    public class CancelReservationResponse
+    public class UploadFileResponse
     {
-        public bool IsSuccess { get; set; }
         public string Message { get; set; }
     }
 }

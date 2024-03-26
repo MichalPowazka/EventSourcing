@@ -1,4 +1,5 @@
-﻿using EventSourcing.Domain.Entities;
+﻿using EventSourcing.Application.Dto;
+using EventSourcing.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace EventSourcing.Application.Queries.GetRoomById
         public required string HouseNumber { get; set; }
         public required string ApartamentNumber { get; set; }
         public required string PostCode { get; set; }
-        public List<RoomToReservation> Reservations { get; set; }
+        public List<ReservationDto> Reservations { get; set; }
         public List<Opinion> Opinions { get; set; }
+        public string RoomStream { get; set; }
     }
 }

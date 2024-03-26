@@ -18,19 +18,10 @@ namespace EventSourcingApi.Controllers
         //Lista rezerwacji // wszytkich lub po jakims filtrze
         // query //Historia rezerwacji
       
-      
-
-
-        //logowanie
-        //rejestracja
-        //
-
-
         [HttpPost]
         public async Task<ActionResult<int>> AddReservation(AddBookingRequest request)
         {
             var result = await _mediator.Send(request);
-            //var a = await test.GetById(request.Id).ToListAsync();
             return Ok(result);
         }
 
@@ -39,7 +30,6 @@ namespace EventSourcingApi.Controllers
         public async Task<ActionResult<int>> CancelReservation(CancelReservationRequest request)
         {
             var result = await _mediator.Send(request);
-            //var a = await test.GetById(request.Id).ToListAsync();
             return Ok(result);
         }
 
@@ -47,7 +37,6 @@ namespace EventSourcingApi.Controllers
         public async Task<ActionResult<int>> UpdateReservation(UpdateReservationRequest request)
         {
             var result = await _mediator.Send(request);
-            //var a = await test.GetById(request.Id).ToListAsync();
             return Ok(result);
         }
 
