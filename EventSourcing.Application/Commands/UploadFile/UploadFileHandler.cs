@@ -1,21 +1,15 @@
-﻿using EventSourcing.Application.Commands.AddRoom;
+﻿using EventSourcing.Domain.Entities;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EventSourcing.Application.Commands.UploadFile
 {
     public class UploadFileHandler(IRoomRepository _roomRepository) : IRequestHandler<UploadFileRequest, UploadFileResponse>
     {
-        async Task<UploadFileResponse> IRequestHandler<UploadFileRequest, UploadFileResponse>.Handle(UploadFileRequest request, CancellationToken cancellationToken)
+        public async Task<UploadFileResponse> Handle(UploadFileRequest request, CancellationToken cancellationToken)
         {
-            
-            if (request.File !=null && request.File.Length > 0) 
+
+            if (request.File != null && request.File.Length > 0)
             {
                 var filePath = Path.Combine(@"D:\", request.File.FileName);
 
@@ -23,8 +17,13 @@ namespace EventSourcing.Application.Commands.UploadFile
                 {
                     await request.File.CopyToAsync(fileStream);
                 }
-
-                
+                var roomImage = new RoomImage()
+                {
+                    RoomId = request.RoomId,
+                    ImagePath = filePath,
+                    Name = request.File.FileName
+                };
+                var a = await _roomRepository.AddImageAsync(roomImage);
 
                 return new UploadFileResponse
                 {

@@ -24,6 +24,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IRoomRepository, RoomRepository>();
 builder.Services.AddTransient<IReseravtionService, ReservationService>();
 builder.Services.AddTransient<IReservationRepository, ReservationRepository>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUserContext, UserConterxt>();
 
 
 var jwtOptions = builder.Configuration
@@ -89,10 +91,10 @@ if (app.Environment.IsDevelopment())
 }
 
 
-/*app.UseCors(policy => policy.WithOrigins("http://localhost:3000")
+app.UseCors(policy => policy.WithOrigins("http://localhost:4200")
         .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
         .AllowAnyHeader()
-        .AllowCredentials());*/
+        .AllowCredentials());
 
 app.UseHttpsRedirection();
 

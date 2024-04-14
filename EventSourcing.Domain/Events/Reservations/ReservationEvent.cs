@@ -17,7 +17,7 @@
 
     public enum ReseravatioEventType
     {
-        Create, Update, Cancel
+        Create, Update, Cancel, Init
     }
 
 }

@@ -6,4 +6,6 @@ public interface IUserEventsRepository
 {
     IAsyncEnumerable<UserEvent> GetById(string id);
     Task Save(UserEvent reservationEvent);
+    Task CreateStream(UserEvent reservationEvent);
+
 }

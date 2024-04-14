@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Linq;
 
 namespace EventSourcing.Application.Commands.Login;
 
@@ -17,29 +18,38 @@ public class LoginHandler(UserManager<User> _userManager, JwtOptions jwtOptions)
     {
         var user = await _userManager.FindByEmailAsync(request.Email) ?? throw new ApplicationException("Invalid username or password.");
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
+        var roles = await _userManager.GetRolesAsync(user);
         if (!isPasswordValid)
         {
-            throw new ApplicationException("Invalid username or password.");
+            return new LoginResponse
+            {
+                Message = "Niepoprawny login lub hasło",
+                Token = null,
+                isSuccess = false
+            };
         }
 
-        var token = GenerateJwtToken(user);
+        var token = GenerateJwtToken(user, roles);
 
         return new LoginResponse
         {
-            Message = token.ToString()
+            Token = token.ToString(),
+            Message = "Logowanie zakończyło się sukcesem",
+            isSuccess = true
         };
     }
-    private string GenerateJwtToken(User user)
+    private string GenerateJwtToken(User user, IList<string> roles)
     {
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        var claims = new[]
+        var claims = new List<Claim>()
         {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName),
-            
         };
+
+        claims.AddRange(from role in roles select new Claim(ClaimTypes.Role, role));
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor

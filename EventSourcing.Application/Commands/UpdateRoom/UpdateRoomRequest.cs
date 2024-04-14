@@ -2,7 +2,7 @@
 
 namespace EventSourcing.Application.Commands.UpdateRoom;
 
-public class UpdateRoomRequest :IRequest<UpdateUserResponse>
+public class UpdateRoomRequest :IRequest<UpdateRoomResponse>
 {
     public required int Id { get; set; }
     public required string Name { get; set; }

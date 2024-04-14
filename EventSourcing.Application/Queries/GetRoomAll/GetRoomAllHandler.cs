@@ -1,4 +1,5 @@
 ﻿using EventSourcing.Application.Queries.GetRoomById;
+using EventSourcing.Application.Services;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcing.Application.Queries.GetRoomAll
 {
-    public class GetRoomAllHandler(IRoomRepository _roomRepository) : IRequestHandler<GetRoomAllQueryRequest, GetRoomAllResponse>
+    public class GetRoomAllHandler(IRoomRepository _roomRepository, IUserContext userContext) : IRequestHandler<GetRoomAllQueryRequest, GetRoomAllResponse>
     {
         public async Task<GetRoomAllResponse> Handle(GetRoomAllQueryRequest request, CancellationToken cancellationToken)
         {
@@ -18,8 +19,6 @@ namespace EventSourcing.Application.Queries.GetRoomAll
             {
 
             }
-
-
 
 
             return new GetRoomAllResponse()

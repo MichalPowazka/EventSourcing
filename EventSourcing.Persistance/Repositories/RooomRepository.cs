@@ -31,18 +31,6 @@ namespace EventSourcing.Persistance.Repositories
            var room = await _bookingDbContext.Rooms.FindAsync(id);
             return room.Id;
         }
-
-        public async Task<int> BookingRoom(RoomToReservation roomToReservation)
-        {
-            var r = await GetAsync(roomToReservation.RoomId);
-            //r.Reservations.Add(roomToReservation);
-            _bookingDbContext.SaveChanges();
-            return roomToReservation.Id;
-
-        }
-
-        //DI CONTEXT
-
         public async Task<Room> GetAsync(int id)
         {   //pobieranie id
             var result = await _bookingDbContext.Rooms.SingleOrDefaultAsync(a => a.Id == id);
@@ -54,6 +42,25 @@ namespace EventSourcing.Persistance.Repositories
         {
             var result = await _bookingDbContext.Rooms.ToListAsync();
             return result;
+        }
+
+        public async Task<int> AddImageAsync(RoomImage image)
+        {
+            _bookingDbContext.Add(image);
+            await _bookingDbContext.SaveChangesAsync();
+            return image.Id;
+        }
+
+        public async Task<RoomImage> GetImageAsync(int id)
+        {
+            var result = await _bookingDbContext.RoomImages.SingleOrDefaultAsync(a => a.Id == id);
+            return result;
+        }
+
+        public async Task DeleteImage(RoomImage image)
+        {
+            _bookingDbContext.RoomImages.Remove(image);
+            await _bookingDbContext.SaveChangesAsync();
         }
     }
 }

@@ -8,7 +8,8 @@ namespace EventSourcing.Domain.Entities
                  
     {
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<RoomToReservation> RoomToReservation { get; set; }
+        public DbSet<RoomImage> RoomImages { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

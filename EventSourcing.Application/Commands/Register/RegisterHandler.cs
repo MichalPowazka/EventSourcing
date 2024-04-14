@@ -3,6 +3,7 @@ using EventSourcing.Domain.Events.Users;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using System.Diagnostics;
 
 namespace EventSourcing.Application.Commands.Register
 {
@@ -37,20 +38,36 @@ namespace EventSourcing.Application.Commands.Register
                         User = user,
                         Type = UserEventType.Register
                     };
-                    await _userEventsRepository.Save(@event);
+                    await _userEventsRepository.CreateStream(@event);
+                    await _userManager.AddToRoleAsync(user, "User");
+
+                    return new RegisterResponse()
+                    {
+                        IsSuccces = true,
+                        Message = "Powiodlo sie"
+                    };
+
+
+                } else
+                {
+                    return new RegisterResponse()
+                    {
+                        IsSuccces = false,
+                        Message = "Cos poszlo nie tak"
+                    };
                 }
-                await _userManager.AddToRoleAsync(user, "User");
 
             }
             catch (Exception ex)
             {
                 var a = ex;
+                return new RegisterResponse() { IsSuccces = false, Message = a.Message };
             }
 
 
 
 
-            return new RegisterResponse();
+            
         }
     }
 }

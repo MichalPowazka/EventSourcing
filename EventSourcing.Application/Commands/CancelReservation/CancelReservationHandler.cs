@@ -11,6 +11,9 @@ namespace EventSourcing.Application.Commands.CancelReservation
     {
         public async Task<CancelReservationResponse> Handle(CancelReservationRequest request, CancellationToken cancellationToken)
         {
+            //jesli ma role admin to analuj bez sprawdzania
+            //pobreanie o tym uniqe id 
+            //sprawdzanie czy to jego,
             try
             {
                 var @event = new ReservationEvent()

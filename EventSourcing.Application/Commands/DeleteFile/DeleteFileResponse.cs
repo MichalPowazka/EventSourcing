@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventSourcing.Application.Commands.Login
+namespace EventSourcing.Application.Commands.DeleteFile
 {
-    public class LoginResponse
+    public class DeleteFileResponse
     {
-        public string Token { get; set; }
-
+        public bool IsSuccess { get; set; }
         public string Message { get; set; }
-        public bool isSuccess { get; set; }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using EventSourcing.Domain.Entities;
+using EventSourcing.Domain.Events.Reservations;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
 
 namespace EventSourcing.Application.Commands.AddRoom;
 
-public class AddRoomHandler(IRoomRepository _roomRepository) : IRequestHandler<AddRoomRequest, AddRoomResponse>
+public class AddRoomHandler(IRoomRepository _roomRepository, IReservationRepository _reservationRepository) : IRequestHandler<AddRoomRequest, AddRoomResponse>
 {
     async Task<AddRoomResponse> IRequestHandler<AddRoomRequest, AddRoomResponse>.Handle(AddRoomRequest request, CancellationToken cancellationToken)
     {
@@ -19,6 +20,14 @@ public class AddRoomHandler(IRoomRepository _roomRepository) : IRequestHandler<A
             RoomStream = Guid.NewGuid().ToString()
         };
         await _roomRepository.AddAsync(room);
+        var @event = new ReservationEvent()
+        {
+            RoomStream = room.RoomStream,
+            Type = ReseravatioEventType.Init,
+            ReservationUniqueid = room.RoomStream
+        };
+        await _reservationRepository.CreateStream(@event);
+
         return new AddRoomResponse() { Success = true };
     }
 }

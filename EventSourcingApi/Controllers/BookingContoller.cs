@@ -2,6 +2,8 @@
 using EventSourcing.Application.Commands.CancelReservation;
 using EventSourcing.Application.Commands.UpdateReservation;
 using EventSourcing.Application.Queries.CheckAvailability;
+using EventSourcing.Application.Queries.GetReservation;
+using EventSourcingApi.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +12,7 @@ namespace EventSourcingApi.Controllers
     [Route("[controller]/[action]")]
     [ApiController]
 
-    public class ReseravationContoller(IMediator _mediator) : ControllerBase
+    public class ReseravationController(IMediator _mediator) : Controller
     {
 
         
@@ -19,32 +21,54 @@ namespace EventSourcingApi.Controllers
         // query //Historia rezerwacji
       
         [HttpPost]
-        public async Task<ActionResult<int>> AddReservation(AddBookingRequest request)
+        [RoleAuthorize("User")]
+        public async Task<AddBookingResponse> AddReservation(AddBookingRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
 
 
         [HttpPost]
-        public async Task<ActionResult<int>> CancelReservation(CancelReservationRequest request)
+        [RoleAuthorize("User","Admin")]
+        public async Task<CancelReservationResponse> CancelReservation(CancelReservationRequest request)
         {
+            //sprawdzanie czy to jest twoja rezerwacja
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> UpdateReservation(UpdateReservationRequest request)
+        public async Task<UpdateReservationResponse> UpdateReservation(UpdateReservationRequest request)
         {
+            //sprawdzanie czy to jest twoja rezerwacja
+
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
 
         [HttpGet]
-        public async Task<ActionResult> CheckAvailability([FromQuery] CheckAvailabilityQueryRequest request)
+        public async Task<CheckAvailabilityResponse> CheckAvailability([FromQuery] CheckAvailabilityQueryRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
+
+        [HttpGet]
+        public async Task<GetReservationResposne> GetReservationById([FromQuery] GetReservationRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return result;
+        }
+
+        
+
+ 
+
+       
+
+        //RezerwacjeByUser - zwraca twoje rezerwacje
+        //admin dostep i mozliwosc anulowania lub zmiany czyjejsc rezerwacji
+        //GetAllReservation dla admina
     }
 }

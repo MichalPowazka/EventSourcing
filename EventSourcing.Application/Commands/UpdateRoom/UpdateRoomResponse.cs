@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcing.Application.Commands.UpdateRoom
 {
-    public class UpdateUserResponse
+    public class UpdateRoomResponse
     {
         public bool Success { get; set; }
     }

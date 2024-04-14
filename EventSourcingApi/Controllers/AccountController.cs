@@ -3,6 +3,7 @@ using EventSourcing.Application.Commands.Register;
 using EventSourcing.Application.Commands.RestorePassword;
 using EventSourcing.Application.Commands.UpdateUser;
 using EventSourcing.Application.Queries.GetUserHistory;
+using EventSourcingApi.Common;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,41 +22,39 @@ namespace EventSourcingApi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> Login(LoginRequest request)
+        public async Task<LoginResponse> Login(LoginRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
 
         [HttpPost]
-        public async Task<ActionResult> Register(RegisterRequest request)
+        public async Task<RegisterResponse> Register(RegisterRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok();
+            return result;
         }
 
         [HttpPost]
-        
-        public async Task<ActionResult> UpdateUser(UpdateUserRequest request)
+        public async Task<UpdateUserResponse> UpdateUser(UpdateUserRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok();
+            return result;
         }
 
         [HttpPost]
-
-        public async Task<ActionResult> RestorePassword(RestorePasswordRequest request)
+        public async Task<ResotrePasswordResponse> RestorePassword(RestorePasswordRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
 
         [HttpGet]
-
-        public async Task<ActionResult> GetUserHistory([FromQuery] GetUserHistoryQueryRequest request)
+        [RoleAuthorize("Admin")]
+        public async Task<GetUserHistoryResponse> GetUserHistory([FromQuery] GetUserHistoryQueryRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
     }
 }

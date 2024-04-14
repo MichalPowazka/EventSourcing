@@ -7,7 +7,17 @@ namespace EventSourcing.Persistance.Repositories
 {
     public class UserEventsRepository(EventStoreClient _client) : IUserEventsRepository
     {
-        private const string stream = "User - ";
+        public async Task CreateStream(UserEvent reservationEvent)
+        {
+
+            var streamName = reservationEvent.UniqueId.ToString();
+            var eventData = new EventData(
+                Uuid.NewUuid(),
+                reservationEvent.GetType().Name,
+                JsonSerializer.SerializeToUtf8Bytes(reservationEvent));
+            await _client.AppendToStreamAsync(streamName, StreamState.NoStream, new[] { eventData });
+        }
+
         public async IAsyncEnumerable<UserEvent> GetById(string id)
         {
             var readResult = await _client.ReadStreamAsync(Direction.Forwards, id, StreamPosition.Start, 100).ToListAsync();
@@ -30,7 +40,14 @@ namespace EventSourcing.Persistance.Repositories
 
             await _client.AppendToStreamAsync(streamName, clientOneRevision, new[] { eventData });
         }
+        /*
+            var streamName = userEvent.UniqueId.ToString();
+            var eventData = new EventData(
+                Uuid.NewUuid(),
+                userEvent.GetType().Name,
+                JsonSerializer.SerializeToUtf8Bytes(userEvent));
 
+            await _client.AppendToStreamAsync(streamName, StreamState.Any, new[] { eventData });*/
 
     }
 }

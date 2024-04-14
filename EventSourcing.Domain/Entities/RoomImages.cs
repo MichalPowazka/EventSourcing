@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcing.Domain.Entities
 {
-    public class RoomImages
+    public class RoomImage
     {
         public int Id { get; set; } 
         public int RoomId { get; set; }

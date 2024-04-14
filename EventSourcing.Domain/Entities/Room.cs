@@ -13,7 +13,7 @@
 
         public List<Opinion> Opinions { get; set; }
         public string ControlValue { get; set; }
-        public List<RoomImages> Images { get; set; }
+        public List<RoomImage> Images { get; set; }
         public string RoomStream { get; set; }
 
     }

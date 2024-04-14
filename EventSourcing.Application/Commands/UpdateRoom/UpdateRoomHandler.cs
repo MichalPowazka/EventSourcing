@@ -4,9 +4,9 @@ using MediatR;
 
 namespace EventSourcing.Application.Commands.UpdateRoom;
 
-public class UpdateRoomHandler(IRoomRepository _roomRepository) : IRequestHandler<UpdateRoomRequest, UpdateUserResponse>
+public class UpdateRoomHandler(IRoomRepository _roomRepository) : IRequestHandler<UpdateRoomRequest, UpdateRoomResponse>
 {
-    public async Task<UpdateUserResponse> Handle(UpdateRoomRequest request, CancellationToken cancellationToken)
+    public async Task<UpdateRoomResponse> Handle(UpdateRoomRequest request, CancellationToken cancellationToken)
     {   //pobieramhy pokoj  z db
         //zmianmy paramtry
         //zapis do db
@@ -26,6 +26,6 @@ public class UpdateRoomHandler(IRoomRepository _roomRepository) : IRequestHandle
 
 
         await _roomRepository.UpdateAsync(existingRoom);
-        return new UpdateUserResponse() { Success = true };
+        return new UpdateRoomResponse() { Success = true };
     }
 }

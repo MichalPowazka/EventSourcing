@@ -5,58 +5,70 @@ using EventSourcing.Application.Queries.GetRoomById;
 using EventSourcing.Application.Commands.UploadFile;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using EventSourcing.Application.Commands.DeleteFile;
+using EventSourcingApi.Common;
 
 namespace EventSourcingApi.Controllers
 {
-
     [Route("[controller]/[action]")]
     [ApiController]
 
-    public class RoomController(IMediator _mediator) : ControllerBase
+    public class RoomController(IMediator _mediator, IHttpContextAccessor _httpContextAccessor) : Controller
     {
 
-        [HttpPost("add-room")]
+        [HttpPost]
+        [RoleAuthorize("Admin")]
 
-        public async Task<ActionResult> AddRoom([FromBody] AddRoomRequest request)
+        public async Task<AddRoomResponse> AddRoom(AddRoomRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
 
-        [HttpPut("update-room")]
-        public async Task<ActionResult> UpdateRoom([FromBody] UpdateRoomRequest request)
+        [HttpPut]
+        [RoleAuthorize("Admin")]
+
+        public async Task<UpdateRoomResponse> UpdateRoom(UpdateRoomRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
 
-        [AllowAnonymous]
-        [HttpGet("get-room")]
-
-        public async Task<ActionResult> GetRoomById([FromQuery] GetRoomByIdQueryRequest request)
+        //[AllowAnonymous]
+        [HttpGet]
+        public async Task<GetRoomByIdResponse> GetRoomById([FromQuery] GetRoomByIdQueryRequest request)
         {
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
 
-        [HttpGet("get-room-all")]
-        [Authorize]
-        public async Task<ActionResult> GetRoomAll([FromQuery] GetRoomAllQueryRequest request)
+        [HttpGet]
+        public async Task<GetRoomAllResponse> GetRoomAll([FromQuery] GetRoomAllQueryRequest request)
         {
-            var result = await _mediator.Send(request);
-            return Ok(result);
-        }
+            var a = _httpContextAccessor.HttpContext.User;
 
-
-        [HttpPost("upload-file")]
-        public async Task<ActionResult> UploadFile(UploadFileRequest request)
-        {
             var result = await _mediator.Send(request);
-            return Ok(result);
+            return result;
         }
 
 
+        [HttpPost]
+        [RoleAuthorize("Admin")]
+
+        public async Task<UploadFileResponse> UploadFile(UploadFileRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return result;
+        }
+
+        [HttpDelete]
+        [RoleAuthorize("Admin")]
+
+        public async Task<DeleteFileResponse> DeleteFile(DeleteFileRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return result;
+        }
 
 
 

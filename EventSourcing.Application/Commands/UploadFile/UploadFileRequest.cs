@@ -10,7 +10,7 @@ namespace EventSourcing.Application.Commands.UploadFile
 {
     public class UploadFileRequest :IRequest<UploadFileResponse>
     {
-        public string FileName { get; set; }
+        public int RoomId { get; set; }
         public IFormFile File {  get; set; }
     }
 }
