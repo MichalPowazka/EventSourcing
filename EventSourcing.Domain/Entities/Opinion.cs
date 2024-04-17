@@ -6,4 +6,5 @@ public class Opinion
     public string Text { get; set; }
     public int Rating { get; set; }
     public User User { get; set; }
+    public int RoomId { get; set; }
 }

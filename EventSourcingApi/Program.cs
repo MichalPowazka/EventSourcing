@@ -26,6 +26,7 @@ builder.Services.AddTransient<IReseravtionService, ReservationService>();
 builder.Services.AddTransient<IReservationRepository, ReservationRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserConterxt>();
+builder.Services.AddScoped<IOpinionRepository, OpinionRepository>();
 
 
 var jwtOptions = builder.Configuration

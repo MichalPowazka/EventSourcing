@@ -11,19 +11,23 @@ using System.Threading.Tasks;
 
 namespace EventSourcing.Application.Queries.GetReservationsAll
 {
-   /* public class GetReservationsAllHandler(IReseravtionService reservationRepository, IRoomRepository roomRepository) : IRequestHandler<GetReservationsAllQueryRequest, GetReservationsAllResponse>
-    {
-        private readonly IReservationRepository _reservationRepository = reservationRepository;
-        private readonly IRoomRepository _roomRepository = roomRepository;
+    public class GetReservationsAllHandler(IReseravtionService _reservationService, IRoomRepository _roomRepository) : IRequestHandler<GetReservationsAllQueryRequest, GetReservationsAllResponse>
+    { 
         public async Task<GetReservationsAllResponse> Handle(GetReservationsAllQueryRequest request, CancellationToken cancellationToken)
         {
             var rooms = await _roomRepository.GetAllAsync();
-            var roomReservations = new List<ReservationDto>();
+            var allReservations = new List<ReservationDto>();
 
             foreach (var room in rooms)
             {
-                
+                var reservations = await _reservationService.GetReservationsForRoom(room.RoomStream);
+                allReservations.AddRange(reservations);
             }
+
+            return new GetReservationsAllResponse()
+            {
+                Reservations = allReservations
+            };
         }
-    }*/
+    }
 }

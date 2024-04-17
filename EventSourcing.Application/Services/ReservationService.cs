@@ -57,7 +57,8 @@ public class ReservationService(IRoomRepository _roomRepository, IReservationRep
                 {
                     DateFrom = lastEvent.CreateData.DateFrom,
                     DateTo = lastEvent.CreateData.DateTo,
-                    ReservationUniqueId = resevation.Key
+                    ReservationUniqueId = resevation.Key,
+                    User = lastEvent.CreateData.User
                 });
             }
 
@@ -67,7 +68,8 @@ public class ReservationService(IRoomRepository _roomRepository, IReservationRep
                 {
                     DateFrom = lastEvent.UpdateData.DateFrom,
                     DateTo = lastEvent.UpdateData.DateTo,
-                    ReservationUniqueId = resevation.Key
+                    ReservationUniqueId = resevation.Key,
+                    User = lastEvent.UpdateData.User
                 });
             }
         }

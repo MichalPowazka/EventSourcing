@@ -33,7 +33,7 @@ namespace EventSourcing.Persistance.Repositories
         }
         public async Task<Room> GetAsync(int id)
         {   //pobieranie id
-            var result = await _bookingDbContext.Rooms.SingleOrDefaultAsync(a => a.Id == id);
+            var result = await _bookingDbContext.Rooms.Include(r=> r.Opinions).SingleOrDefaultAsync(a => a.Id == id);
             return result;
             //inclue themiclude
         }

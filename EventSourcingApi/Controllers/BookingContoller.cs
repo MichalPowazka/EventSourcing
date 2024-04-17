@@ -3,6 +3,8 @@ using EventSourcing.Application.Commands.CancelReservation;
 using EventSourcing.Application.Commands.UpdateReservation;
 using EventSourcing.Application.Queries.CheckAvailability;
 using EventSourcing.Application.Queries.GetReservation;
+using EventSourcing.Application.Queries.GetReservationsAll;
+using EventSourcing.Application.Queries.GetResevrationsLoggedUser;
 using EventSourcingApi.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -61,11 +63,24 @@ namespace EventSourcingApi.Controllers
             return result;
         }
 
-        
+        [HttpGet]
+        public async Task<GetReservationsAllResponse> GetReservationsAll([FromQuery] GetReservationsAllQueryRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return result;
+        }
 
- 
+        [HttpGet]
+        public async Task<GetResevrationsLoggedUserResponse> GetReservationByUser([FromQuery] GetResevrationsLoggedUserQueryRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return result;
+        }
 
-       
+
+
+
+
 
         //RezerwacjeByUser - zwraca twoje rezerwacje
         //admin dostep i mozliwosc anulowania lub zmiany czyjejsc rezerwacji

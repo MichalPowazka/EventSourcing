@@ -18,9 +18,7 @@ public class ReservationRepository(EventStoreClient _client) : IReservationRepos
 
     public async IAsyncEnumerable<ReservationEvent> GetById(string id)
     {
-
         var readResult = await _client.ReadStreamAsync(Direction.Forwards, id, StreamPosition.Start, 100).ToListAsync();
-
 
         //seralizacja na kilku typów obiektów na podstawie Event Type
         foreach (var resolved in readResult)
@@ -43,18 +41,6 @@ public class ReservationRepository(EventStoreClient _client) : IReservationRepos
             reservationEvent.GetType().Name,
             JsonSerializer.SerializeToUtf8Bytes(reservationEvent));
         await _client.AppendToStreamAsync(streamName, clientOneRevision, new[] { eventData });
-
-
-
-
-        // Sprawdzanie 
-        //    var res2 = reservationEvent;
-        //   var eventData2 = new EventData(
-        //Uuid.NewUuid(),
-        //reservationEvent.GetType().Name,
-        //JsonSerializer.SerializeToUtf8Bytes(res2));
-        //    var b = await _client.AppendToStreamAsync(streamName, clientOneRevision, new[] { eventData2 });
-
 
 
     }

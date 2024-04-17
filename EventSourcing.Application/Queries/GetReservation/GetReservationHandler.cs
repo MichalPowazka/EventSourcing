@@ -7,8 +7,8 @@ namespace EventSourcing.Application.Queries.GetReservation
 {
     public class GetReservationHandler(IReseravtionService reservationRepository, IRoomRepository roomRepository) : IRequestHandler<GetReservationRequest, GetReservationResposne>
     {
-        private readonly IReseravtionService _reservationService = reservationRepository; 
-        private readonly IRoomRepository _roomRepository = roomRepository;
+            private readonly IReseravtionService _reservationService = reservationRepository; 
+            private readonly IRoomRepository _roomRepository = roomRepository;
 
         //zwracal liste rezerwacji
         // do rezerwacji dociągnąc dane z pokoju

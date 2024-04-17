@@ -45,7 +45,6 @@ namespace EventSourcingApi.Controllers
         [HttpGet]
         public async Task<GetRoomAllResponse> GetRoomAll([FromQuery] GetRoomAllQueryRequest request)
         {
-            var a = _httpContextAccessor.HttpContext.User;
 
             var result = await _mediator.Send(request);
             return result;
