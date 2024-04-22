@@ -40,7 +40,7 @@ namespace EventSourcing.Persistance.Repositories
 
         public async Task<List<Room>> GetAllAsync()
         {
-            var result = await _bookingDbContext.Rooms.ToListAsync();
+            var result = await _bookingDbContext.Rooms.Include(x=>x.Images).ToListAsync();
             return result;
         }
 

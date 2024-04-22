@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EventSourcing.Application.Commands.CancelReservation
 {
 
-    public class CancelReservationHandler(IReservationRepository _reservationRepository) : IRequestHandler<CancelReservationRequest, CancelReservationResponse>
+    public class CancelReservationHandler(IAggreagte _reservationRepository) : IRequestHandler<CancelReservationRequest, CancelReservationResponse>
     {
         public async Task<CancelReservationResponse> Handle(CancelReservationRequest request, CancellationToken cancellationToken)
         {

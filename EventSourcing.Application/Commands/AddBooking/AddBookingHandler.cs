@@ -4,7 +4,7 @@ using MediatR;
 
 namespace EventSourcing.Application.Commands.AddBooking
 {
-    public class AddBookingHandler(IReservationRepository _reservationRepository, IRoomRepository _roomRepository, IReseravtionService _reseravtionService) : IRequestHandler<AddBookingRequest, AddBookingResponse>
+    public class AddBookingHandler(IAggreagte _reservationRepository, IRoomRepository _roomRepository, IReseravtionService _reseravtionService) : IRequestHandler<AddBookingRequest, AddBookingResponse>
     {
         public async Task<AddBookingResponse> Handle(AddBookingRequest request, CancellationToken cancellationToken)
         {

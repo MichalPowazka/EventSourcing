@@ -1,4 +1,5 @@
-﻿using EventSourcing.Application.Commands.Login;
+﻿using EventSourcing.Application.Commands.DisactiveUser;
+using EventSourcing.Application.Commands.Login;
 using EventSourcing.Application.Commands.Register;
 using EventSourcing.Application.Commands.RestorePassword;
 using EventSourcing.Application.Commands.UpdateUser;
@@ -48,6 +49,12 @@ namespace EventSourcingApi.Controllers
             var result = await _mediator.Send(request);
             return result;
         }
+        [HttpPost]
+        public async Task<ChangeStatusUserResponse> ChangeStatusUser(ChangeStatusUserRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return result;
+        }
 
         [HttpGet]
         [RoleAuthorize("Admin")]
@@ -56,5 +63,6 @@ namespace EventSourcingApi.Controllers
             var result = await _mediator.Send(request);
             return result;
         }
+
     }
 }

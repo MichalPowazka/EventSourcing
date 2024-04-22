@@ -23,15 +23,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IRoomRepository, RoomRepository>();
 builder.Services.AddTransient<IReseravtionService, ReservationService>();
-builder.Services.AddTransient<IReservationRepository, ReservationRepository>();
+builder.Services.AddTransient<IAggreagte, ReservationRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserConterxt>();
 builder.Services.AddScoped<IOpinionRepository, OpinionRepository>();
 
 
-var jwtOptions = builder.Configuration
-    .GetSection("JwtOptions")
-    .Get<JwtOptions>();
+var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>();
+if (jwtOptions == null)
+{
+    throw new InvalidOperationException("JwtOptions section is missing in configuration.");
+}
+
 builder.Services.AddSingleton(jwtOptions);
 
 
@@ -50,17 +53,18 @@ builder.Services.AddIdentity<User, Role>()
 
 
 
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddSwaggerGen(/*options =>
 {
-    options.AddSecurityDefinition("outh2", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
+    //options.AddSecurityDefinition("outh2", new OpenApiSecurityScheme
+    //{
+    //    In = ParameterLocation.Header,
+    //    Name = "Authorization",
+    //    Type = SecuritySchemeType.ApiKey
+    //});
 
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
-});
+    options.OperationFilter<SecurityRequirementsOperationFilter>();*/
+//}
+);
 
 builder.Services.AddAuthentication(option =>
 {

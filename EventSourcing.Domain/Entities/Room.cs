@@ -10,11 +10,11 @@
         public required string HouseNumber { get; set; }
         public required string ApartamentNumber { get; set; }
         public required string PostCode { get; set; }
-
         public List<Opinion> Opinions { get; set; }
         public string ControlValue { get; set; }
         public List<RoomImage> Images { get; set; }
         public string RoomStream { get; set; }
+        public bool IsActive { get; set; }
 
     }
 }

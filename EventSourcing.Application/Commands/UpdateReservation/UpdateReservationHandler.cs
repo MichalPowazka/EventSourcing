@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventSourcing.Application.Commands.UpdateReservation;
 
-public class UpdateReservationHandler(IReservationRepository _reservationRepository, IReseravtionService _reseravtionService) : IRequestHandler<UpdateReservationRequest, UpdateReservationResponse>
+public class UpdateReservationHandler(IAggreagte _reservationRepository, IReseravtionService _reseravtionService) : IRequestHandler<UpdateReservationRequest, UpdateReservationResponse>
 {
     public async Task<UpdateReservationResponse> Handle(UpdateReservationRequest request, CancellationToken cancellationToken)
     {

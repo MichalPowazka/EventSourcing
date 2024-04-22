@@ -2,7 +2,8 @@
 
 namespace EventSourcing.Persistance.Repositories;
 
-public interface IReservationRepository
+public interface IAggreagte 
+
 {
     IAsyncEnumerable<ReservationEvent> GetById(string id);
     Task Save(ReservationEvent reservationEvent);

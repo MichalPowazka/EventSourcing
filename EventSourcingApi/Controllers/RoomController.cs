@@ -50,6 +50,13 @@ namespace EventSourcingApi.Controllers
             return result;
         }
 
+        [HttpGet]
+        public ActionResult Get(int id)
+        {
+            var image = System.IO.File.OpenRead(@"D:\Przechwytywanie.JPG");
+            return File(image, "image/jpeg");
+        }
+
 
         [HttpPost]
         [RoleAuthorize("Admin")]

@@ -3,11 +3,10 @@ using EventStore.Client;
 using System.Text.Json;
 
 namespace EventSourcing.Persistance.Repositories;
-public class ReservationRepository(EventStoreClient _client) : IReservationRepository
+public class ReservationRepository(EventStoreClient _client) : IAggreagte
 {
     public async Task CreateStream(ReservationEvent reservationEvent)
     {
-
         var streamName = reservationEvent.RoomStream.ToString();
         var eventData = new EventData(
             Uuid.NewUuid(),
@@ -26,7 +25,6 @@ public class ReservationRepository(EventStoreClient _client) : IReservationRepos
             var a = JsonSerializer.Deserialize<ReservationEvent>(resolved.Event.Data.Span);
             yield return a;
         }
-
     }
 
     public async Task Save(ReservationEvent reservationEvent)
@@ -41,7 +39,6 @@ public class ReservationRepository(EventStoreClient _client) : IReservationRepos
             reservationEvent.GetType().Name,
             JsonSerializer.SerializeToUtf8Bytes(reservationEvent));
         await _client.AppendToStreamAsync(streamName, clientOneRevision, new[] { eventData });
-
 
     }
 

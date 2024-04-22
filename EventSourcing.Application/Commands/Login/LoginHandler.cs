@@ -1,14 +1,11 @@
 ﻿using EventSourcing.Domain.Entities;
 using EventSourcingApi;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Linq;
 
 namespace EventSourcing.Application.Commands.Login;
 
@@ -16,7 +13,28 @@ public class LoginHandler(UserManager<User> _userManager, JwtOptions jwtOptions)
 {
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email) ?? throw new ApplicationException("Invalid username or password.");
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null)
+        {
+            return new LoginResponse
+            {
+                Message = "Nie znaleziono uzytkownika",
+                Token = null,
+                isSuccess = false
+            };
+        }
+
+        if (!user.IsActive)
+        {
+            return new LoginResponse
+            {
+                Message = "Użytkownik nie aktywny",
+                Token = null,
+                isSuccess = false
+            };
+        }
+
+
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         var roles = await _userManager.GetRolesAsync(user);
         if (!isPasswordValid)
@@ -28,6 +46,8 @@ public class LoginHandler(UserManager<User> _userManager, JwtOptions jwtOptions)
                 isSuccess = false
             };
         }
+
+
 
         var token = GenerateJwtToken(user, roles);
 

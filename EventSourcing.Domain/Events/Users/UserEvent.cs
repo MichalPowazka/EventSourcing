@@ -38,7 +38,13 @@ namespace EventSourcing.Domain.Events.Users
         SuccessChangeData,
 
         [Description("FailedChangeData")]
-        FailedChangeData
+        FailedChangeData,
+
+        [Description("SuccessChangeStatus")]
+        SuccessChangeStatus,
+
+        [Description("FailedChangeStatus")]
+        FailedChangeStatus
 
     }
 }

@@ -25,7 +25,7 @@ namespace EventSourcing.Persistance
 
             var client = new EventStoreClient(a);
             services.AddSingleton<EventStoreClient>(client);
-            services.AddScoped<IReservationRepository, ReservationRepository>();
+            services.AddScoped<IAggreagte, ReservationRepository>();
             services.AddScoped<IUserEventsRepository, UserEventsRepository>();
 
             return services;

@@ -7,7 +7,7 @@ using EventSourcing.Persistance.Repositories;
 
 namespace EventSourcing.Application.Services;
 
-public class ReservationService(IRoomRepository _roomRepository, IReservationRepository _reservationRepository, IUserContext _userContext) : IReseravtionService
+public class ReservationService(IRoomRepository _roomRepository, IAggreagte _reservationRepository, IUserContext _userContext) : IReseravtionService
 {
 
     public async Task<bool> AddReservation(AddBookingRequest request, Room room)
