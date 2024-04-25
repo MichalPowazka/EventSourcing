@@ -3,14 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventSourcing.Persistance.Repositories
 {
-    public class RoomRepository : IRoomRepository
+    public class RoomRepository(BookingDbContext dbContext) : IRoomRepository
     {
-        private readonly BookingDbContext _bookingDbContext;
+        private readonly BookingDbContext _bookingDbContext = dbContext;
 
-        public RoomRepository(BookingDbContext dbContext)
-        {
-            _bookingDbContext = dbContext;
-        }
         public async Task<int> AddAsync(Room room)
         {
             _bookingDbContext.Add(room);

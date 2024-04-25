@@ -3,7 +3,7 @@ using EventStore.Client;
 using System.Text.Json;
 
 namespace EventSourcing.Persistance.Repositories;
-public class ReservationRepository(EventStoreClient _client) : IAggreagte
+public class ReservationRepository(EventStoreClient _client) : IAggreagte<ReservationEvent>
 {
     public async Task CreateStream(ReservationEvent reservationEvent)
     {
@@ -19,7 +19,6 @@ public class ReservationRepository(EventStoreClient _client) : IAggreagte
     {
         var readResult = await _client.ReadStreamAsync(Direction.Forwards, id, StreamPosition.Start, 100).ToListAsync();
 
-        //seralizacja na kilku typów obiektów na podstawie Event Type
         foreach (var resolved in readResult)
         {
             var a = JsonSerializer.Deserialize<ReservationEvent>(resolved.Event.Data.Span);

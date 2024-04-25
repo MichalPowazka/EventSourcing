@@ -3,37 +3,26 @@ using EventSourcing.Domain.Entities;
 using EventSourcing.Persistance;
 using EventSourcing.Persistance.Repositories;
 using EventSourcingApi;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddPersistance();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(EventSourcing.Application.RegisterMediatR).Assembly));
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IRoomRepository, RoomRepository>();
 builder.Services.AddTransient<IReseravtionService, ReservationService>();
-builder.Services.AddTransient<IAggreagte, ReservationRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserConterxt>();
 builder.Services.AddScoped<IOpinionRepository, OpinionRepository>();
 
 
-var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>();
-if (jwtOptions == null)
-{
-    throw new InvalidOperationException("JwtOptions section is missing in configuration.");
-}
+var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>() ?? throw new InvalidOperationException("JwtOptions section is missing in configuration.");
 
 builder.Services.AddSingleton(jwtOptions);
 
@@ -43,8 +32,6 @@ builder.Services.AddSingleton(jwtOptions);
 builder.Services.AddDbContext<BookingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-// konfiguracja dla dbContext
 builder.Services.AddIdentity<User, Role>()
         .AddEntityFrameworkStores<BookingDbContext>()
         .AddDefaultTokenProviders();
@@ -53,18 +40,7 @@ builder.Services.AddIdentity<User, Role>()
 
 
 
-builder.Services.AddSwaggerGen(/*options =>
-{
-    //options.AddSecurityDefinition("outh2", new OpenApiSecurityScheme
-    //{
-    //    In = ParameterLocation.Header,
-    //    Name = "Authorization",
-    //    Type = SecuritySchemeType.ApiKey
-    //});
-
-    options.OperationFilter<SecurityRequirementsOperationFilter>();*/
-//}
-);
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthentication(option =>
 {
@@ -83,12 +59,7 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
-
-
-
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -102,8 +73,6 @@ app.UseCors(policy => policy.WithOrigins("http://localhost:4200")
         .AllowCredentials());
 
 app.UseHttpsRedirection();
-
-//testowe wywalenie
 app.UseAuthentication();
 app.UseAuthorization();
 

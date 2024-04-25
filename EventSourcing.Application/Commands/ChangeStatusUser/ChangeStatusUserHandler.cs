@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EventSourcing.Application.Commands.DisactiveUser;
 
-public class ChangeStatusUserHandler(UserManager<User> _userManager, IUserEventsRepository _userEventsRepository) : IRequestHandler<ChangeStatusUserRequest, ChangeStatusUserResponse>
+public class ChangeStatusUserHandler(UserManager<User> _userManager, IAggreagte<UserEvent> _userEventsRepository) : IRequestHandler<ChangeStatusUserRequest, ChangeStatusUserResponse>
 {
     public async Task<ChangeStatusUserResponse> Handle(ChangeStatusUserRequest request, CancellationToken cancellationToken)
     {

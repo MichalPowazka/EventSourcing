@@ -10,5 +10,7 @@ namespace EventSourcing.Application.Queries.GetRoomAll
     public class GetRoomAllResponse
     {
         public List<Room> ListRooms { get; set; }
+
+        public bool IsSuccess { get; set; }
     }
 }

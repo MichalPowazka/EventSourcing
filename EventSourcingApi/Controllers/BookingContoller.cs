@@ -17,11 +17,6 @@ namespace EventSourcingApi.Controllers
     public class ReseravationController(IMediator _mediator) : Controller
     {
 
-        
-        //query//Pobranie rezerwacji // pobranie eventów per pokoj
-        //Lista rezerwacji // wszytkich lub po jakims filtrze
-        // query //Historia rezerwacji
-      
         [HttpPost]
         [RoleAuthorize("User")]
         public async Task<AddBookingResponse> AddReservation(AddBookingRequest request)
@@ -35,16 +30,14 @@ namespace EventSourcingApi.Controllers
         [RoleAuthorize("User","Admin")]
         public async Task<CancelReservationResponse> CancelReservation(CancelReservationRequest request)
         {
-            //sprawdzanie czy to jest twoja rezerwacja
             var result = await _mediator.Send(request);
             return result;
         }
 
         [HttpPost]
+        [RoleAuthorize("User")]
         public async Task<UpdateReservationResponse> UpdateReservation(UpdateReservationRequest request)
         {
-            //sprawdzanie czy to jest twoja rezerwacja
-
             var result = await _mediator.Send(request);
             return result;
         }
@@ -57,6 +50,7 @@ namespace EventSourcingApi.Controllers
         }
 
         [HttpGet]
+        [RoleAuthorize("User","Admin")]
         public async Task<GetReservationResposne> GetReservationById([FromQuery] GetReservationRequest request)
         {
             var result = await _mediator.Send(request);
@@ -64,6 +58,7 @@ namespace EventSourcingApi.Controllers
         }
 
         [HttpGet]
+        [RoleAuthorize("Admin")]
         public async Task<GetReservationsAllResponse> GetReservationsAll([FromQuery] GetReservationsAllQueryRequest request)
         {
             var result = await _mediator.Send(request);
@@ -71,6 +66,7 @@ namespace EventSourcingApi.Controllers
         }
 
         [HttpGet]
+        [RoleAuthorize("User")]
         public async Task<GetResevrationsLoggedUserResponse> GetReservationByUser([FromQuery] GetResevrationsLoggedUserQueryRequest request)
         {
             var result = await _mediator.Send(request);
@@ -79,11 +75,5 @@ namespace EventSourcingApi.Controllers
 
 
 
-
-
-
-        //RezerwacjeByUser - zwraca twoje rezerwacje
-        //admin dostep i mozliwosc anulowania lub zmiany czyjejsc rezerwacji
-        //GetAllReservation dla admina
     }
 }

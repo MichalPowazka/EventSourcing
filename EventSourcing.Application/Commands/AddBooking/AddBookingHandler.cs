@@ -1,20 +1,18 @@
 ﻿using EventSourcing.Application.Services;
+using EventSourcing.Domain.Events.Reservations;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
 
 namespace EventSourcing.Application.Commands.AddBooking
 {
-    public class AddBookingHandler(IAggreagte _reservationRepository, IRoomRepository _roomRepository, IReseravtionService _reseravtionService) : IRequestHandler<AddBookingRequest, AddBookingResponse>
+    public class AddBookingHandler(IRoomRepository _roomRepository, IReseravtionService _reseravtionService) : IRequestHandler<AddBookingRequest, AddBookingResponse>
     {
         public async Task<AddBookingResponse> Handle(AddBookingRequest request, CancellationToken cancellationToken)
         {
-                //
-                //powiaznie rezerwacji z pokojem
-                // pobiieramy pokok
+
                 var isAvaible = await _reseravtionService.IsAvaible(request.RoomId, request.DateFrom, request.DateTo);
                 if (!isAvaible)
                 {
-                    //rzucasz wyjatątek
                     return new AddBookingResponse()
                     {
                         IsSuccess = false,
@@ -61,19 +59,16 @@ namespace EventSourcing.Application.Commands.AddBooking
 
                 }
 
-                var a = _reseravtionService.GetReservationsForRoom(request.RoomStreamId);
+            await _reseravtionService.GetReservationsForRoom(request.RoomStreamId);
 
 
-            
+
 
             return new AddBookingResponse()
             {
                 IsSuccess = true,
             };
 
-
-
-            //booking.add
         }
     }
 }

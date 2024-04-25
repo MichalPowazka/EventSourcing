@@ -3,15 +3,13 @@ using EventSourcing.Domain.Events.Users;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System.Diagnostics;
 
 namespace EventSourcing.Application.Commands.Register
 {
-    public class RegisterHandler(UserManager<User> _userManager, IUserEventsRepository _userEventsRepository) : IRequestHandler<RegisterRequest, RegisterResponse>
+    public class RegisterHandler(UserManager<User> _userManager, IAggreagte<UserEvent> _userEventsRepository) : IRequestHandler<RegisterRequest, RegisterResponse>
     {
         public async Task<RegisterResponse> Handle(RegisterRequest request, CancellationToken cancellationToken)
         {
-            //_userManager.CreateAsync()
             var user = new User
             {
 
@@ -19,15 +17,12 @@ namespace EventSourcing.Application.Commands.Register
                 LastName = request.LastName,
                 Email = request.Email,
                 UserName = request.Email,
-                StreamId = Guid.NewGuid().ToString()
+                StreamId = Guid.NewGuid().ToString(),
+                IsActive = true
 
             };
-
             try
             {
-
-
-
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
@@ -63,11 +58,7 @@ namespace EventSourcing.Application.Commands.Register
                 var a = ex;
                 return new RegisterResponse() { IsSuccces = false, Message = a.Message };
             }
-
-
-
-
-            
+  
         }
     }
 }

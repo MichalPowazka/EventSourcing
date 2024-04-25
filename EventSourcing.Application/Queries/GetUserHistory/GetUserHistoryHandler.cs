@@ -1,17 +1,28 @@
 ﻿using EventSourcing.Domain.Entities;
+using EventSourcing.Domain.Events.Users;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace EventSourcing.Application.Queries.GetUserHistory;
 
-public class GetUserHistoryHandler(UserManager<User> _userManager, IUserEventsRepository _userEventsRepository) : IRequestHandler<GetUserHistoryQueryRequest, GetUserHistoryResponse>
+public class GetUserHistoryHandler(UserManager<User> _userManager, IAggreagte<UserEvent> _userEventsRepository) : IRequestHandler<GetUserHistoryQueryRequest, GetUserHistoryResponse>
 {
     public async Task<GetUserHistoryResponse> Handle(GetUserHistoryQueryRequest request, CancellationToken cancellationToken)
     {
 
         var user = await _userManager.FindByIdAsync(request.Id.ToString());
-        var events = await _userEventsRepository.GetById(user.StreamId).ToListAsync();
+
+        if (user == null)
+        {
+            return new GetUserHistoryResponse()
+            {
+                IsSuccess = false,
+                Message= "Użytkownik o takim ID nie istnieje"
+            };
+;
+        }
+        var events = await _userEventsRepository.GetById(user.StreamId).ToListAsync(cancellationToken: cancellationToken);
 
 
         var result = events.Select(x => new UserHistoryDto
@@ -21,7 +32,7 @@ public class GetUserHistoryHandler(UserManager<User> _userManager, IUserEventsRe
             UserNakme = x.User.UserName
 
         }).ToList();
-        return new GetUserHistoryResponse() { History = result };
+        return new GetUserHistoryResponse() { History = result, IsSuccess= true };
 
     }
 }

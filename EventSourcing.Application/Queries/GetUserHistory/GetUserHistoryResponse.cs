@@ -3,6 +3,8 @@
 public class GetUserHistoryResponse
 {
     public List<UserHistoryDto> History { get; set; }
+    public bool IsSuccess { get; set; }
+    public string Message { get; set; }
 }
 
 

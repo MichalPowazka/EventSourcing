@@ -19,13 +19,16 @@ namespace EventSourcing.Application.Queries.GetRoomById
             var result = await _roomRepository.GetAsync(request.Id);
             if (result == null) 
             {
-
+                return new GetRoomByIdResponse() 
+                {
+                    IsSuccess = false,
+                };
             }
 
             var reservations = new List<ReservationDto>();
             reservations = await _reservationService.GetReservationsForRoom(result.RoomStream);
 
-            return new GetRoomByIdResponse() 
+            return new GetRoomByIdResponse()
             {
                 Id = result.Id,
                 Name = result.Name,
@@ -37,7 +40,8 @@ namespace EventSourcing.Application.Queries.GetRoomById
                 PostCode = result.PostCode,
                 Reservations = reservations,
                 Opinions = result.Opinions,
-                RoomStream = result.RoomStream, 
+                RoomStream = result.RoomStream,
+                IsSuccess = true
             };
         }
     }

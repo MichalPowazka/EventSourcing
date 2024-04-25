@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using EventSourcing.Application.Commands.AddBooking;
+﻿using EventSourcing.Application.Commands.AddBooking;
 using EventSourcing.Application.Dto;
 using EventSourcing.Domain.Entities;
 using EventSourcing.Domain.Events.Reservations;
@@ -7,7 +6,7 @@ using EventSourcing.Persistance.Repositories;
 
 namespace EventSourcing.Application.Services;
 
-public class ReservationService(IRoomRepository _roomRepository, IAggreagte _reservationRepository, IUserContext _userContext) : IReseravtionService
+public class ReservationService(IRoomRepository _roomRepository, IAggreagte<ReservationEvent> _reservationRepository, IUserContext _userContext) : IReseravtionService
 {
 
     public async Task<bool> AddReservation(AddBookingRequest request, Room room)
@@ -34,7 +33,7 @@ public class ReservationService(IRoomRepository _roomRepository, IAggreagte _res
 
             return true;
         }
-        catch(Exception ex) 
+        catch (Exception)
         {
             return false;
         }
@@ -82,11 +81,19 @@ public class ReservationService(IRoomRepository _roomRepository, IAggreagte _res
         var reservationList = new List<ReservationDto>();
         var room = await _roomRepository.GetAsync(roomId);
         reservationList = await GetReservationsForRoom(room.RoomStream);
+        dateFrom = dateFrom.AddHours(0 - dateFrom.Hour);
+        dateFrom = dateFrom.AddMinutes(0 - dateFrom.Minute);
+        dateFrom = dateFrom.AddSeconds(0 - dateFrom.Second);
+
+        dateTo = dateTo.AddHours(23 - dateTo.Hour);
+        dateTo = dateTo.AddMinutes(59 - dateTo.Minute);
+        dateTo = dateTo.AddSeconds(59 - dateTo.Second);
+
 
         var overlappingReservations = reservationList.Any(x =>
-        (dateFrom >= x.DateFrom && dateFrom <= x.DateTo) ||   // data początkowa wewnątrz istniejącej rezerwacji
-        (dateTo >= x.DateFrom && dateTo <= x.DateTo) ||       // data końcowa wewnątrz istniejącej rezerwacji
-        (dateFrom <= x.DateFrom && dateTo >= x.DateTo)        // cała rezerwacja obejmuje istniejącą rezerwację
+        (dateFrom >= x.DateFrom && dateFrom <= x.DateTo) ||   
+        (dateTo >= x.DateFrom && dateTo <= x.DateTo) ||       
+        (dateFrom <= x.DateFrom && dateTo >= x.DateTo)        
             );
         res = !overlappingReservations;
 

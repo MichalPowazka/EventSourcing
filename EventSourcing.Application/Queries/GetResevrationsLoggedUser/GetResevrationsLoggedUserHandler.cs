@@ -17,7 +17,8 @@ namespace EventSourcing.Application.Queries.GetResevrationsLoggedUser
             foreach (var room in rooms)
             {
                 var reservations = await _reservationService.GetReservationsForRoom(room.RoomStream);
-                myReservations.AddRange(reservations.Where(r=>r.User.UserName == currentUser.UserName));
+                reservations = reservations.Where(r => r.User !=null && r.User.Id == currentUser.Id).ToList();
+                myReservations.AddRange(reservations);
             }
 
             return new GetResevrationsLoggedUserResponse()

@@ -1,5 +1,4 @@
-﻿using EventSourcing.Domain.Entities;
-using EventSourcing.Persistance.Repositories;
+﻿using EventSourcing.Persistance.Repositories;
 using MediatR;
 
 namespace EventSourcing.Application.Commands.UpdateRoom;
@@ -7,14 +6,16 @@ namespace EventSourcing.Application.Commands.UpdateRoom;
 public class UpdateRoomHandler(IRoomRepository _roomRepository) : IRequestHandler<UpdateRoomRequest, UpdateRoomResponse>
 {
     public async Task<UpdateRoomResponse> Handle(UpdateRoomRequest request, CancellationToken cancellationToken)
-    {   //pobieramhy pokoj  z db
-        //zmianmy paramtry
-        //zapis do db
+    {   
         var existingRoom = await _roomRepository.GetAsync(request.Id);
 
         if(existingRoom == null)
         {
-            throw new ArgumentException();
+            return new UpdateRoomResponse()
+            {
+                Success = false
+
+            };
         }
 
         existingRoom.Name = request.Name;
@@ -22,8 +23,6 @@ public class UpdateRoomHandler(IRoomRepository _roomRepository) : IRequestHandle
         existingRoom.City = request.City;
         existingRoom.Street = request.Street;
         existingRoom.HouseNumber = request.HouseNumber;
-
-
 
         await _roomRepository.UpdateAsync(existingRoom);
         return new UpdateRoomResponse() { Success = true };

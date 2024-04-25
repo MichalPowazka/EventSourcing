@@ -1,19 +1,12 @@
-﻿using EventSourcing.Application.Commands.UpdateRoom;
-using EventSourcing.Domain.Entities;
-using EventSourcing.Domain.Events.Reservations;
+﻿using EventSourcing.Domain.Entities;
 using EventSourcing.Domain.Events.Users;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EventSourcing.Application.Commands.UpdateUser
 {
-    public class UpdateUserHandler(UserManager<User> _userManager, IUserEventsRepository _userEventsRepository) : IRequestHandler<UpdateUserRequest, UpdateUserResponse>
+    public class UpdateUserHandler(UserManager<User> _userManager, IAggreagte<UserEvent> _userEventsRepository) : IRequestHandler<UpdateUserRequest, UpdateUserResponse>
     {
         public async Task<UpdateUserResponse> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
         {
@@ -38,7 +31,6 @@ namespace EventSourcing.Application.Commands.UpdateUser
 
             var updateResult = await _userManager.UpdateAsync(user);
 
-            //ZApis eventu do event store
 
             if (updateResult.Succeeded)
             {
@@ -51,7 +43,7 @@ namespace EventSourcing.Application.Commands.UpdateUser
                 };
                 await _userEventsRepository.Save(@event);
 
-                return new UpdateUserResponse { Success = true };
+                return new UpdateUserResponse { Success = true , Message = "Aktualizacja powiodła się." };
             }
             else
             {
@@ -60,10 +52,9 @@ namespace EventSourcing.Application.Commands.UpdateUser
                     UniqueId = user.StreamId,
                     Date = DateTime.UtcNow,
                     User = user,
-                    Type = UserEventType.FailedLogin
+                    Type = UserEventType.FailedChangeData
                 };
                 await _userEventsRepository.Save(@event);
-                // Obsłuż błąd gdy nie udało się zaktualizować użytkownika
                 return new UpdateUserResponse { Success = false, Message = "Nie udało się zaktualizować użytkownika." };
             }
 

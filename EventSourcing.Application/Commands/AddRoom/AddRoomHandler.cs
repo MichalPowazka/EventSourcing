@@ -5,7 +5,7 @@ using MediatR;
 
 namespace EventSourcing.Application.Commands.AddRoom;
 
-public class AddRoomHandler(IRoomRepository _roomRepository, IAggreagte _reservationRepository) : IRequestHandler<AddRoomRequest, AddRoomResponse>
+public class AddRoomHandler(IRoomRepository _roomRepository, IAggreagte<ReservationEvent> _reservationRepository) : IRequestHandler<AddRoomRequest, AddRoomResponse>
 {
     async Task<AddRoomResponse> IRequestHandler<AddRoomRequest, AddRoomResponse>.Handle(AddRoomRequest request, CancellationToken cancellationToken)
     {
@@ -17,7 +17,9 @@ public class AddRoomHandler(IRoomRepository _roomRepository, IAggreagte _reserva
             HouseNumber = request.HouseNumber,
             ApartamentNumber = request.ApartamentNumber,
             PostCode = request.PostCode,
-            RoomStream = Guid.NewGuid().ToString()
+            RoomStream = Guid.NewGuid().ToString(),
+            IsActive = true
+            
         };
         await _roomRepository.AddAsync(room);
         var @event = new ReservationEvent()

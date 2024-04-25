@@ -11,15 +11,18 @@ namespace EventSourcing.Application.Queries.GetRoomById
     public class GetRoomByIdResponse
     {
         public int Id { get; set; }
-        public required string Name { get; set; }
-        public required string Description { get; set; }
-        public required string City { get; set; }
-        public required string Street { get; set; }
-        public required string HouseNumber { get; set; }
-        public required string ApartamentNumber { get; set; }
-        public required string PostCode { get; set; }
+        public  string Name { get; set; }
+        public  string Description { get; set; }
+        public  string City { get; set; }
+        public  string Street { get; set; }
+        public  string HouseNumber { get; set; }
+        public  string ApartamentNumber { get; set; }
+        public  string PostCode { get; set; }
         public List<ReservationDto> Reservations { get; set; }
         public List<Opinion> Opinions { get; set; }
         public string RoomStream { get; set; }
+        public bool IsSuccess {  get; set; } 
     }
+
+   
 }

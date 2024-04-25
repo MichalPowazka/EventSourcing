@@ -1,12 +1,10 @@
-﻿using EventSourcing.Domain.Events.Reservations;
+﻿namespace EventSourcing.Persistance.Repositories;
 
-namespace EventSourcing.Persistance.Repositories;
-
-public interface IAggreagte 
+public interface IAggreagte<T>
 
 {
-    IAsyncEnumerable<ReservationEvent> GetById(string id);
-    Task Save(ReservationEvent reservationEvent);
-    Task CreateStream(ReservationEvent reservationEvent);
+    IAsyncEnumerable<T> GetById(string id);
+    Task Save(T @event);
+    Task CreateStream(T @event);
 
 }

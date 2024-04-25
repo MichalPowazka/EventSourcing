@@ -1,13 +1,11 @@
-﻿using EventSourcing.Application.Commands.AddBooking;
-using EventSourcing.Application.Services;
+﻿using EventSourcing.Application.Services;
 using EventSourcing.Domain.Events.Reservations;
 using EventSourcing.Persistance.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace EventSourcing.Application.Commands.UpdateReservation;
 
-public class UpdateReservationHandler(IAggreagte _reservationRepository, IReseravtionService _reseravtionService) : IRequestHandler<UpdateReservationRequest, UpdateReservationResponse>
+public class UpdateReservationHandler(IAggreagte<ReservationEvent> _reservationRepository, IReseravtionService _reseravtionService, IUserContext _userContext) : IRequestHandler<UpdateReservationRequest, UpdateReservationResponse>
 {
     public async Task<UpdateReservationResponse> Handle(UpdateReservationRequest request, CancellationToken cancellationToken)
     {
@@ -32,6 +30,7 @@ public class UpdateReservationHandler(IAggreagte _reservationRepository, IResera
                 {
                     DateFrom = request.DateFrom,
                     DateTo = request.DateTo,
+                    User = await _userContext.GetCurrentUser()
                 }
 
             };

@@ -1,4 +1,6 @@
-﻿using EventSourcing.Persistance.Repositories;
+﻿using EventSourcing.Domain.Events.Reservations;
+using EventSourcing.Domain.Events.Users;
+using EventSourcing.Persistance.Repositories;
 using EventStore.Client;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -15,18 +17,12 @@ namespace EventSourcing.Persistance
         public static IServiceCollection AddPersistance(this IServiceCollection services)
         {
             var a = EventStoreClientSettings.Create("esdb://127.0.0.1:2113/?tls=false");
-            var settings = new EventStoreClientSettings
-            {
-                ConnectivitySettings = new EventStoreClientConnectivitySettings
-                {
-                    Address = new Uri("esdb://127.0.0.1:2113/?tls=true&tlsVerifyCert=false")
-                }
-            };
+  
 
             var client = new EventStoreClient(a);
             services.AddSingleton<EventStoreClient>(client);
-            services.AddScoped<IAggreagte, ReservationRepository>();
-            services.AddScoped<IUserEventsRepository, UserEventsRepository>();
+            services.AddScoped<IAggreagte<ReservationEvent>, ReservationRepository>();
+            services.AddScoped<IAggreagte<UserEvent>, UserEventsRepository>();
 
             return services;
         }

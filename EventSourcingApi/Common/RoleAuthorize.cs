@@ -12,15 +12,22 @@ namespace EventSourcingApi.Common
         public void OnAuthorization(AuthorizationFilterContext context)
         {
 
-            var userManager = (UserManager<User>)context.HttpContext.RequestServices.GetService(typeof(UserManager<User>));
-            var user = userManager.FindByEmailAsync(context.HttpContext.User.Identity.Name).Result;
-            var userroles = userManager.GetRolesAsync(user).Result;
-            if (!userroles.Intersect(roles).Any())
-            {
-                context.Result = new UnauthorizedResult();
+            var userManager = (UserManager<User>)context.HttpContext.RequestServices.GetService(typeof(UserManager<User>))!;
+            var user = userManager.FindByEmailAsync(context!.HttpContext!.User.Identity?.Name!).Result;
 
+            if(user != null)
+            {
+                var userroles = userManager.GetRolesAsync(user).Result;
+                if (!userroles.Intersect(roles).Any())
+                {
+                    context.Result = new UnauthorizedResult();
+
+                }
+                return;
             }
+            context.Result = new UnauthorizedResult();
             return;
+
         }
     }
 }

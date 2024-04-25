@@ -20,7 +20,7 @@ public class LoginHandler(UserManager<User> _userManager, JwtOptions jwtOptions)
             {
                 Message = "Nie znaleziono uzytkownika",
                 Token = null,
-                isSuccess = false
+                IsSuccess = false
             };
         }
 
@@ -30,7 +30,7 @@ public class LoginHandler(UserManager<User> _userManager, JwtOptions jwtOptions)
             {
                 Message = "Użytkownik nie aktywny",
                 Token = null,
-                isSuccess = false
+                IsSuccess = false
             };
         }
 
@@ -43,7 +43,7 @@ public class LoginHandler(UserManager<User> _userManager, JwtOptions jwtOptions)
             {
                 Message = "Niepoprawny login lub hasło",
                 Token = null,
-                isSuccess = false
+                IsSuccess = false
             };
         }
 
@@ -55,7 +55,7 @@ public class LoginHandler(UserManager<User> _userManager, JwtOptions jwtOptions)
         {
             Token = token.ToString(),
             Message = "Logowanie zakończyło się sukcesem",
-            isSuccess = true
+            IsSuccess = true
         };
     }
     private string GenerateJwtToken(User user, IList<string> roles)
@@ -63,13 +63,12 @@ public class LoginHandler(UserManager<User> _userManager, JwtOptions jwtOptions)
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        var claims = new List<Claim>()
-        {
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.UserName),
-        };
-
-        claims.AddRange(from role in roles select new Claim(ClaimTypes.Role, role));
+        List<Claim> claims =
+        [
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Name, user.UserName),
+            .. from role in roles select new Claim(ClaimTypes.Role, role),
+        ];
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcing.Application.Commands.RestorePassword
 {
-    public class RestorePasswordRequest : IRequest<ResotrePasswordResponse>
+    public class ChangePasswordRequest : IRequest<ChangePasswordResponse>
     {
         public string Email { get; set; }
         public string Password { get; set; }
