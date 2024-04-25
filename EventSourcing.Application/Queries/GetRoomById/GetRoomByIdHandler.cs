@@ -25,9 +25,6 @@ namespace EventSourcing.Application.Queries.GetRoomById
                 };
             }
 
-            var reservations = new List<ReservationDto>();
-            reservations = await _reservationService.GetReservationsForRoom(result.RoomStream);
-
             return new GetRoomByIdResponse()
             {
                 Id = result.Id,
@@ -38,7 +35,7 @@ namespace EventSourcing.Application.Queries.GetRoomById
                 HouseNumber = result.HouseNumber,
                 ApartamentNumber = result.ApartamentNumber,
                 PostCode = result.PostCode,
-                Reservations = reservations,
+                Reservations = await _reservationService.GetReservationsForRoom(result.RoomStream),
                 Opinions = result.Opinions,
                 RoomStream = result.RoomStream,
                 IsSuccess = true
